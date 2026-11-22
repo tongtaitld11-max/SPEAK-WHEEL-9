@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SPEAK-CHECK 9 — Trạm Luyện Nói Tiếng Anh 9 (SPEAK-WHEEL 9)</title>
+  <style>
+    :root {
+      --navy: #14365D;
+      --blue: #1D6FA5;
+      --blue-soft: #EBF5FB;
+      --green: #1E8449;
+      --green-soft: #EAFAF1;
+      --amber: #B7791F;
+      --amber-soft: #FEF9E7;
+      --red: #C0392B;
+      --red-soft: #FDEDEC;
+      --bg: #F4F7FA;
+      --card: #FFFFFF;
+      --text: #1F2937;
+      --muted: #5A6778;
+      --border: #D9E2EC;
+      --radius: 14px;
+      --shadow: 0 4px 14px rgba(20, 54, 93, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 48px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: #fff;
+      padding: 18px 16px 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    }
+    .header-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand h1 {
+      font-size: 1.35rem;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+    .privacy-badge {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.32);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 18px auto 0;
+      padding: 0 14px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    /* Controls Grid */
+    .wheel-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    label.field-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.94rem;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input[type="text"]:focus {
+      border-color: var(--blue);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s, opacity 0.2s, background 0.2s;
+    }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--navy); }
+    .btn-spin { background: linear-gradient(135deg, #D97706, #EA580C); color: #fff; }
+    .btn-spin:hover:not(:disabled) { filter: brightness(1.06); }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-green:hover:not(:disabled) { background: #166534; }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-red:hover:not(:disabled) { background: #991B1B; }
+    .btn-outline {
+      background: #fff;
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover:not(:disabled) { background: var(--blue-soft); border-color: var(--blue); }
+
+    /* Prompt Combination Box */
+    .combo-box {
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      border-left: 5px solid var(--green);
+      background: var(--green-soft);
+      transition: all 0.25s;
+    }
+    .combo-box.level-B1 { border-left-color: var(--amber); background: var(--amber-soft); }
+    .combo-box.level-B1P { border-left-color: var(--red); background: var(--red-soft); }
+    .combo-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .pill {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(0,0,0,0.08);
+      color: var(--navy);
+    }
+    .prompt-task {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .scaffold-list {
+      list-style: none;
+      display: grid;
+      gap: 4px;
+      font-size: 0.9rem;
+      color: #2D3748;
+    }
+    .scaffold-list li::before {
+      content: "▸ ";
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    /* Shadowing Box */
+    .sample-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.96rem;
+      color: #1E293B;
+      margin-bottom: 12px;
+    }
+    .sample-vi {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    /* Keywords Chips */
+    .kw-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .kw-chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      background: #EEF2F7;
+      color: #334155;
+      border: 1.5px solid #CBD5E1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .kw-chip:hover { transform: translateY(-1px); }
+    .kw-chip.hit {
+      background: var(--green-soft);
+      color: var(--green);
+      border-color: var(--green);
+    }
+    .kw-chip.miss {
+      background: var(--red-soft);
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    /* Cycle 60-45-30s & Mic Area */
+    .rounds-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .round-btn {
+      flex-direction: column;
+      padding: 10px;
+      background: #F8FAFC;
+      color: var(--navy);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+    }
+    .round-btn small { font-weight: 500; font-size: 0.74rem; color: var(--muted); }
+    .round-btn.active {
+      background: var(--blue-soft);
+      border-color: var(--blue);
+      color: var(--navy);
+    }
+    .round-btn.done {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .metric-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .metric-val {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .metric-lbl {
+      font-size: 0.76rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .metric-val.recording { color: var(--red); animation: pulse 1.2s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+
+    .transcript-box {
+      min-height: 110px;
+      background: #F8FAFC;
+      border: 1.5px dashed #94A3B8;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 1rem;
+      color: #0F172A;
+      margin-top: 12px;
+      white-space: pre-wrap;
+    }
+    .word-hit {
+      background: #DCFCE7;
+      color: #166534;
+      padding: 1px 5px;
+      border-radius: 5px;
+      font-weight: 700;
+    }
+    .interim-text { color: #64748B; font-style: italic; }
+
+    .alert-box {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      margin-top: 10px;
+      display: none;
+    }
+    .alert-box.show { display: block; }
+    .alert-warn { background: var(--amber-soft); border: 1px solid #F59E0B; color: #78350F; }
+    .alert-info { background: var(--blue-soft); border: 1px solid var(--blue); color: var(--navy); }
+    .alert-ok { background: var(--green-soft); border: 1px solid var(--green); color: #14532D; }
+
+    /* History Table */
+    .table-wrap { overflow-x: auto; margin-top: 10px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+    th, td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    th {
+      background: #F1F5F9;
+      color: var(--navy);
+      font-weight: 700;
+    }
+    .empty-msg {
+      text-align: center;
+      color: var(--muted);
+      padding: 18px;
+      font-style: italic;
+    }
+
+    .spin-anim { animation: wobble 0.45s ease; }
+    @keyframes wobble {
+      0% { transform: scale(0.98); }
+      40% { transform: scale(1.015); }
+      100% { transform: scale(1); }
+    }
+
+    footer {
+      max-width: 980px;
+      margin: 22px auto 0;
+      padding: 0 14px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <h1>🎯 SPEAK-CHECK 9</h1>
+      <p>Trạm Luyện Nói Tiếng Anh 9 (0 đồng) — Đồng bộ Bàn xoay Giàn giáo SPEAK-WHEEL 9</p>
+    </div>
+    <div class="privacy-badge" title="Xử lý trực tiếp trên trình duyệt, không lưu tệp ghi âm lên máy chủ">
+      🔒 0 đồng · Không lưu file ghi âm
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- BƯỚC 1: SPIN (CHỌN HOẶC XOAY TỔ HỢP) -->
+  <section class="card" id="card-spin">
+    <div class="card-title">
+      <span>1. Chọn hoặc Xoay Tổ hợp Nói (SPIN)</span>
+      <span class="step-badge">12 Unit × 8 Vai trò × 3 Cấp độ = 288 tổ hợp</span>
+    </div>
+
+    <div class="wheel-controls">
+      <div>
+        <label class="field-label" for="unitSelect">Đĩa 1 — Chủ đề (12 Unit Tiếng Anh 9)</label>
+        <select id="unitSelect"></select>
+      </div>
+      <div>
+        <label class="field-label" for="roleSelect">Đĩa 2 — Vai trò giao tiếp (8 Vai trò)</label>
+        <select id="roleSelect"></select>
+      </div>
+      <div>
+        <label class="field-label" for="levelSelect">Đĩa 3 — Cấp độ Giàn giáo (A2 / B1 / B1+)</label>
+        <select id="levelSelect">
+          <option value="A2">🟢 Mức A2 (Cơ bản — Khung mở–thân–kết)</option>
+          <option value="B1">🟡 Mức B1 (Khá — Từ nối lập luận)</option>
+          <option value="B1P">🔴 Mức B1+ (Thử thách — Mở rộng & thành ngữ)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-spin" id="btnRandomSpin">🎲 Xoay ngẫu nhiên 3 tầng (SPIN)</button>
+      <div style="flex:1; min-width:170px;">
+        <input type="text" id="studentCode" placeholder="Mã ẩn danh (VD: TN01) — lưu Sổ tay WPM" />
+      </div>
+    </div>
+
+    <div class="combo-box" id="comboBox">
+      <div class="combo-meta">
+        <span class="pill" id="pillUnit">Unit 1</span>
+        <span class="pill" id="pillRole">Tour Guide</span>
+        <span class="pill" id="pillLevel">Mức A2</span>
+      </div>
+      <div class="prompt-task" id="promptTask"></div>
+      <ul class="scaffold-list" id="scaffoldList"></ul>
+    </div>
+  </section>
+
+  <!-- BƯỚC 2: SCAN & SHADOWING -->
+  <section class="card">
+    <div class="card-title">
+      <span>2. Nghe mẫu & Nhại giọng (SHADOWING)</span>
+      <span class="step-badge">Web SpeechSynthesis · Anh-Anh / Anh-Mỹ</span>
+    </div>
+
+    <div class="sample-box">
+      <div id="sampleTextEn"></div>
+      <div class="sample-vi" id="sampleTextVi"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="btnSpeakSlow">🐢 Nghe chậm 0.8x (HS yếu)</button>
+      <button class="btn-primary" id="btnSpeakNormal">🔊 Nghe chuẩn 1.0x</button>
+      <button class="btn-outline" id="btnStopSpeak">⏹ Dừng đọc</button>
+      <select id="accentSelect" style="width:auto; min-width:145px;">
+        <option value="en-US">🇺🇸 Giọng Anh - Mỹ</option>
+        <option value="en-GB">🇬🇧 Giọng Anh - Anh</option>
+      </select>
+    </div>
+
+    <div style="margin-top:14px;">
+      <label class="field-label">Từ khóa mục tiêu của Unit (Bấm vào từng từ để nghe phát âm mẫu; khi nói: Xanh = Rõ, Đỏ = Cần đọc lại):</label>
+      <div class="kw-grid" id="kwGrid"></div>
+    </div>
+  </section>
+
+  <!-- BƯỚC 3: SPEAK (60s - 45s - 30s) & WPM -->
+  <section class="card">
+    <div class="card-title">
+      <span>3. Thực hành Nói & Phản hồi Tức thì (Chu kỳ 60s – 45s – 30s)</span>
+      <span class="step-badge">Kỹ thuật 4-3-2 cải tiến</span>
+    </div>
+
+    <div class="rounds-bar">
+      <button class="round-btn active" data-round="1" data-sec="60" id="roundBtn1">
+        <span>Lượt 1 · 60 giây</span>
+        <small>Lên ý tưởng & nói đủ ý</small>
+      </button>
+      <button class="round-btn" data-round="2" data-sec="45" id="roundBtn2">
+        <span>Lượt 2 · 45 giây</span>
+        <small>Sửa từ đỏ & nói mượt hơn</small>
+      </button>
+      <button class="round-btn" data-round="3" data-sec="30" id="roundBtn3">
+        <span>Lượt 3 · 30 giây</span>
+        <small>Phản xạ tốc độ cao</small>
+      </button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-green" id="btnStartRec">🎙 Bắt đầu nói (Micro)</button>
+      <button class="btn-red" id="btnStopRec" disabled>⏹ Dừng & Chấm điểm</button>
+      <button class="btn-outline" id="btnResetSession">🔄 Làm lại lượt này</button>
+      <button class="btn-outline" id="btnDemoTest" title="Dùng để kiểm thử nhanh khi thiết bị không có micro">⚡ Chạy thử Demo</button>
+    </div>
+
+    <div class="alert-box alert-warn" id="browserWarn"></div>
+    <div class="alert-box alert-ok" id="feedbackBanner"></div>
+
+    <div class="metrics-strip">
+      <div class="metric-card">
+        <div class="metric-val" id="timerDisplay">60s</div>
+        <div class="metric-lbl">Thời gian còn lại</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="wordCountDisplay">0</div>
+        <div class="metric-lbl">Số từ đã nói</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="wpmDisplay">0</div>
+        <div class="metric-lbl">Tốc độ (WPM)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" id="kwHitDisplay">0/6</div>
+        <div class="metric-lbl">Từ khóa phát âm rõ</div>
+      </div>
+    </div>
+
+    <label class="field-label">Bản gỡ băng trực tiếp (Live Speech-to-Text — từ khóa phát âm đúng được tô xanh):</label>
+    <div class="transcript-box" id="transcriptBox">Nhấn "Bắt đầu nói (Micro)" và nói tiếng Anh về chủ đề đã xoay...</div>
+  </section>
+
+  <!-- BƯỚC 4: SỔ TAY PHẢN XẠ (LƯU CỤC BỘ) -->
+  <section class="card">
+    <div class="card-title">
+      <span>4. Sổ tay Phản xạ WPM (Lưu cục bộ trên thiết bị)</span>
+      <div class="btn-row">
+        <button class="btn-outline" id="btnExportCsv" style="padding:7px 12px; font-size:0.82rem;">📥 Xuất CSV (Excel)</button>
+        <button class="btn-outline" id="btnClearHistory" style="padding:7px 12px; font-size:0.82rem; color:var(--red);">🗑 Xóa lịch sử</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Mã HS</th>
+            <th>Unit</th>
+            <th>Vai trò / Mức</th>
+            <th>Lượt</th>
+            <th>Số từ</th>
+            <th>WPM</th>
+            <th>Từ khóa rõ</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="8" class="empty-msg">Chưa có lượt luyện nói nào được lưu. Hãy hoàn thành 1 lượt nói để ghi nhận tiến bộ!</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  SPEAK-CHECK 9 · Mã nguồn mở HTML5/JS (Web Speech API) · Hỗ trợ URL theo mã QR: <code>?unit=1</code> đến <code>?unit=12</code>.<br/>
+  Khuyến nghị mở bằng <strong>Google Chrome</strong> hoặc <strong>Microsoft Edge</strong> (cấp quyền Micro để nhận diện giọng nói chuẩn nhất).
+</footer>
+
+<script>
+// ============================================================================
+// 1. DỮ LIỆU CHUẨN 12 UNIT TIẾNG ANH 9 (CHƯƠNG TRÌNH GDPT 2018)
+// ============================================================================
+const UNITS = [
+  {
+    id: 1,
+    title: "Unit 1: Local Community",
+    vi: "Cộng đồng địa phương",
+    topicPrompt: "describe a traditional craft, specialty, or community helper in your hometown",
+    keywords: ["community", "artisan", "handicraft", "specialty", "preserve", "neighbour"],
+    sampleEn: "Today I would like to talk about my local community. My hometown is famous for traditional handicraft products made by skilled artisans. We also have friendly neighbours and local specialties that visitors really love. In short, we should preserve our community traditions.",
+    sampleVi: "Gợi ý: Giới thiệu cộng đồng địa phương, làng nghề thủ công, đặc sản, hàng xóm thân thiện và cách gìn giữ truyền thống."
+  },
+  {
+    id: 2,
+    title: "Unit 2: City Life",
+    vi: "Cuộc sống đô thị",
+    topicPrompt: "talk about the advantages, problems, and public transport in a big city",
+    keywords: ["bustling", "traffic", "convenient", "public", "metro", "pollution"],
+    sampleEn: "City life is very bustling and convenient because there are many schools, parks, and modern hospitals. However, big cities often face heavy traffic jams and air pollution. Personally, using public transport like buses or the metro is a great way to make city life greener.",
+    sampleVi: "Gợi ý: Nêu sự nhộn nhịp, tiện ích của thành phố, vấn đề kẹt xe/ô nhiễm và giải pháp giao thông công cộng."
+  },
+  {
+    id: 3,
+    title: "Unit 3: Healthy Living for Teens",
+    vi: "Sống khỏe cho tuổi vị thành niên",
+    topicPrompt: "give practical advice on balancing study, sleep, diet, and mental health for teenagers",
+    keywords: ["balanced", "exercise", "deadline", "stress", "physical", "mental"],
+    sampleEn: "To have a healthy life, teenagers should keep a balanced diet and do physical exercise every day. Moreover, planning our timetable carefully helps us meet deadlines and reduce stress before exams. In short, taking care of both physical and mental health is very important.",
+    sampleVi: "Gợi ý: Chế độ ăn cân bằng, tập thể dục, quản lý hạn chót bài tập để giảm căng thẳng và chăm sóc sức khỏe tinh thần."
+  },
+  {
+    id: 4,
+    title: "Unit 4: Remembering the Past",
+    vi: "Ghi nhớ quá khứ",
+    topicPrompt: "describe a historical place, monument, or traditional custom you want to preserve",
+    keywords: ["heritage", "ancient", "generation", "tradition", "historic", "protect"],
+    sampleEn: "Remembering the past helps young people respect our national heritage. I really admire ancient temples and historic buildings in Viet Nam because they tell meaningful stories about previous generations. Therefore, everyone should work together to protect these valuable traditions.",
+    sampleVi: "Gợi ý: Di sản, công trình cổ/lịch sử, thế hệ đi trước và trách nhiệm bảo vệ truyền thống."
+  },
+  {
+    id: 5,
+    title: "Unit 5: Our Experiences",
+    vi: "Những trải nghiệm của chúng ta",
+    topicPrompt: "share a memorable school trip, camping activity, or learning experience",
+    keywords: ["memorable", "experience", "confident", "explore", "teamwork", "amazing"],
+    sampleEn: "One of my most memorable experiences was a camping trip with my classmates last summer. We explored nature, played outdoor games, and learned great teamwork skills. That amazing experience made me feel much more confident when communicating with others.",
+    sampleVi: "Gợi ý: Kể lại một chuyến đi/trải nghiệm đáng nhớ, khám phá thiên nhiên, kỹ năng làm việc nhóm và sự tự tin."
+  },
+  {
+    id: 6,
+    title: "Unit 6: Vietnamese Lifestyle: Then and Now",
+    vi: "Lối sống Việt Nam xưa và nay",
+    topicPrompt: "compare Vietnamese family life, learning, or entertainment in the past and today",
+    keywords: ["lifestyle", "extended", "nuclear", "modern", "opportunity", "family"],
+    sampleEn: "Vietnamese lifestyle has changed a lot over the years. In the past, many people lived in extended families and children played folk games outdoors. Nowadays, nuclear families are more common, and modern technology gives students better learning opportunities.",
+    sampleVi: "Gợi ý: So sánh gia đình nhiều thế hệ xưa và gia đình hạt nhân nay, công nghệ hiện đại và cơ hội học tập."
+  },
+  {
+    id: 7,
+    title: "Unit 7: Natural Wonders of the World",
+    vi: "Kỳ quan thiên nhiên thế giới",
+    topicPrompt: "introduce a famous natural wonder and suggest ways to protect its landscape",
+    keywords: ["wonder", "landscape", "majestic", "destination", "biodiversity", "sustainable"],
+    sampleEn: "Ha Long Bay is a majestic natural wonder and a famous tourist destination in Viet Nam. Its stunning landscape and rich biodiversity attract millions of visitors every year. To keep it beautiful, we must promote sustainable travel and never litter.",
+    sampleVi: "Gợi ý: Giới thiệu kỳ quan thiên nhiên hùng vĩ, đa dạng sinh học và du lịch bền vững."
+  },
+  {
+    id: 8,
+    title: "Unit 8: Tourism",
+    vi: "Du lịch",
+    topicPrompt: "plan a short itinerary or talk about eco-tourism and package tours",
+    keywords: ["tourism", "itinerary", "brochure", "domestic", "smooth", "local"],
+    sampleEn: "Tourism brings many benefits to local people and helps us learn about different cultures. Before going on a domestic holiday, I always read a travel brochure and prepare a clear itinerary so the trip will be smooth and enjoyable.",
+    sampleVi: "Gợi ý: Lợi ích của du lịch, lập lịch trình (itinerary), cẩm nang du lịch, du lịch nội địa và văn hóa địa phương."
+  },
+  {
+    id: 9,
+    title: "Unit 9: World Englishes",
+    vi: "Tiếng Anh trên thế giới",
+    topicPrompt: "explain why learning English is useful and share effective tips to practice speaking",
+    keywords: ["global", "fluent", "vocabulary", "pronunciation", "communicate", "practice"],
+    sampleEn: "English is a global language that helps people from different countries communicate easily. To become more fluent, students should expand their vocabulary and practice pronunciation every single day. Practicing in pairs is a fun and effective way to speak naturally.",
+    sampleVi: "Gợi ý: Tiếng Anh toàn cầu, giao tiếp quốc tế, mở rộng từ vựng, luyện phát âm và thực hành trôi chảy."
+  },
+  {
+    id: 10,
+    title: "Unit 10: Planet Earth",
+    vi: "Hành tinh Trái Đất",
+    topicPrompt: "explain an environmental threat to habitats and simple green actions students can take",
+    keywords: ["planet", "habitat", "climate", "recycle", "wildlife", "pollution"],
+    sampleEn: "Planet Earth is our only home, but climate change and plastic pollution are harming wildlife habitats everywhere. As grade nine students, we can recycle waste, plant more trees, and save electricity at school to protect nature.",
+    sampleVi: "Gợi ý: Biến đổi khí hậu, môi trường sống động vật hoang dã, tái chế rác và hành động xanh của học sinh."
+  },
+  {
+    id: 11,
+    title: "Unit 11: Electronic Devices",
+    vi: "Thiết bị điện tử",
+    topicPrompt: "discuss a useful electronic device for studying and how to use it safely",
+    keywords: ["device", "portable", "smartphone", "screen", "convenient", "digital"],
+    sampleEn: "Among modern electronic devices, a smartphone or tablet is very portable and convenient for studying English. We can use digital tools to check pronunciation and find learning materials. However, students should limit screen time to protect their eyes.",
+    sampleVi: "Gợi ý: Thiết bị di động tiện lợi cho việc học tiếng Anh, công cụ số và giới hạn thời gian nhìn màn hình."
+  },
+  {
+    id: 12,
+    title: "Unit 12: Career Choices",
+    vi: "Lựa chọn nghề nghiệp",
+    topicPrompt: "talk about your future dream job, needed skills, and why it suits you",
+    keywords: ["career", "passion", "creative", "skill", "vocational", "future"],
+    sampleEn: "Choosing a future career is an important step for grade nine students. I want to follow my passion and become a creative teacher or designer. Besides academic knowledge, developing soft skills or attending vocational courses will prepare me well for the future.",
+    sampleVi: "Gợi ý: Nghề nghiệp tương lai, đam mê, sự sáng tạo, kỹ năng mềm và định hướng học nghề/phổ thông."
+  }
+];
+
+const ROLES = [
+  { id: "Tour Guide", label: "Tour Guide (Hướng dẫn viên)", intro: "As a friendly tour guide, welcome your guests and" },
+  { id: "Interviewer", label: "Club Interviewer (Phỏng vấn CLB)", intro: "As a school English club interviewer, introduce the topic and" },
+  { id: "60s Vlogger", label: "60s Vlogger (Người làm Vlog 60 giây)", intro: "Imagine you are filming a 60-second English vlog; greet your viewers and" },
+  { id: "Health Advisor", label: "Advisor (Cố vấn học đường)", intro: "As a helpful student advisor, give clear suggestions and" },
+  { id: "Foreign Friend", label: "Foreign Friend (Bạn quốc tế)", intro: "Chatting naturally with a foreign pen pal, share your story and" },
+  { id: "Reporter", label: "School Reporter (Phóng viên trường)", intro: "Reporting for your school English newsletter, summarize key facts and" },
+  { id: "Debater", label: "Debater (Người tranh biện)", intro: "Speaking in a mini classroom debate, state your opinion clearly and" },
+  { id: "Presenter", label: "Presenter (Diễn giả thuyết trình)", intro: "Presenting in front of a small group, organize 3 clear points and" }
+];
+
+const SCAFFOLDS = {
+  A2: {
+    name: "Mức A2 — Cơ bản (Xanh)",
+    frames: [
+      "Mở đầu: \"Hello everyone! Today I want to talk about...\"",
+      "Ý chính 1: \"First, it is very... because...\"",
+      "Ý chính 2: \"Second, we can see / do...\"",
+      "Kết thúc: \"In short, I really like / think... Thank you!\""
+    ]
+  },
+  B1: {
+    name: "Mức B1 — Khá (Vàng)",
+    frames: [
+      "Mở đầu: \"To begin with, I'd like to share my thoughts on...\"",
+      "Phát triển ý: \"Moreover / In addition, one big advantage is that...\"",
+      "Đối chiếu: \"On the other hand, we should pay attention to...\"",
+      "Kết luận: \"As a result, I believe that...\""
+    ]
+  },
+  B1P: {
+    name: "Mức B1+ — Thử thách (Đỏ)",
+    frames: [
+      "Dẫn nhập ấn tượng: \"Have you ever wondered how ... shapes our daily life?\"",
+      "Lập luận sâu: \"From my perspective, ... plays a vital role because... For instance, ...\"",
+      "Phản biện / Mở rộng: \"Admittedly, there are challenges such as...; however, ...\"",
+      "Thông điệp chốt: \"All in all, small actions today can make a big difference tomorrow!\""
+    ]
+  }
+};
+
+// ============================================================================
+// 2. TRẠNG THÁI ỨNG DỤNG & KHỞI TẠO
+// ============================================================================
+let currentUnitIdx = 0;
+let currentRoleIdx = 0;
+let currentLevel = "A2";
+let currentRound = 1;
+let roundDuration = 60;
+let secondsLeft = 60;
+let timerInterval = null;
+let startTimeMs = null;
+
+let recognition = null;
+let isRecording = false;
+let finalTranscript = "";
+let interimTranscript = "";
+let matchedKeywordsSet = new Set();
+
+const STORAGE_KEY = "speak_check_9_history_v1";
+
+// DOM Refs
+const unitSelect = document.getElementById("unitSelect");
+const roleSelect = document.getElementById("roleSelect");
+const levelSelect = document.getElementById("levelSelect");
+const studentCodeInput = document.getElementById("studentCode");
+const comboBox = document.getElementById("comboBox");
+const pillUnit = document.getElementById("pillUnit");
+const pillRole = document.getElementById("pillRole");
+const pillLevel = document.getElementById("pillLevel");
+const promptTask = document.getElementById("promptTask");
+const scaffoldList = document.getElementById("scaffoldList");
+const sampleTextEn = document.getElementById("sampleTextEn");
+const sampleTextVi = document.getElementById("sampleTextVi");
+const kwGrid = document.getElementById("kwGrid");
+const accentSelect = document.getElementById("accentSelect");
+const timerDisplay = document.getElementById("timerDisplay");
+const wordCountDisplay = document.getElementById("wordCountDisplay");
+const wpmDisplay = document.getElementById("wpmDisplay");
+const kwHitDisplay = document.getElementById("kwHitDisplay");
+const transcriptBox = document.getElementById("transcriptBox");
+const browserWarn = document.getElementById("browserWarn");
+const feedbackBanner = document.getElementById("feedbackBanner");
+const historyBody = document.getElementById("historyBody");
+const btnStartRec = document.getElementById("btnStartRec");
+const btnStopRec = document.getElementById("btnStopRec");
+
+function initSelectors() {
+  UNITS.forEach((u, idx) => {
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = `${u.title} (${u.vi})`;
+    unitSelect.appendChild(opt);
+  });
+  ROLES.forEach((r, idx) => {
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = r.label;
+    roleSelect.appendChild(opt);
+  });
+
+  // Đọc tham số ?unit=1..12 từ mã QR trên đĩa xoay
+  const params = new URLSearchParams(window.location.search);
+  const qUnit = parseInt(params.get("unit"), 10);
+  if (!isNaN(qUnit) && qUnit >= 1 && qUnit <= UNITS.length) {
+    currentUnitIdx = qUnit - 1;
+    unitSelect.value = currentUnitIdx;
+  }
+}
+
+function renderUnitAndPrompt() {
+  const unit = UNITS[currentUnitIdx];
+  const role = ROLES[currentRoleIdx];
+  const scaf = SCAFFOLDS[currentLevel];
+
+  pillUnit.textContent = unit.title;
+  pillRole.textContent = "🎭 " + role.id;
+  pillLevel.textContent = scaf.name;
+
+  comboBox.className = "combo-box";
+  if (currentLevel === "B1") comboBox.classList.add("level-B1");
+  if (currentLevel === "B1P") comboBox.classList.add("level-B1P");
+
+  promptTask.textContent = `Task: ${role.intro} ${unit.topicPrompt}.`;
+  scaffoldList.innerHTML = scaf.frames.map(f => `<li>${f}</li>`).join("");
+
+  sampleTextEn.textContent = unit.sampleEn;
+  sampleTextVi.textContent = unit.sampleVi;
+
+  resetPracticeState(false);
+  renderKeywords();
+}
+
+function renderKeywords(hasEvaluated = false) {
+  const unit = UNITS[currentUnitIdx];
+  kwGrid.innerHTML = "";
+  unit.keywords.forEach(kw => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "kw-chip";
+    const isHit = matchedKeywordsSet.has(kw.toLowerCase());
+    if (isHit) {
+      chip.classList.add("hit");
+      chip.innerHTML = `✅ ${kw}`;
+    } else if (hasEvaluated) {
+      chip.classList.add("miss");
+      chip.innerHTML = `🔊 ${kw} (đọc lại)`;
+    } else {
+      chip.innerHTML = `🔊 ${kw}`;
+    }
+    chip.title = "Bấm để nghe phát âm chuẩn từ này";
+    chip.addEventListener("click", () => speakText(kw, 0.85));
+    kwGrid.appendChild(chip);
+  });
+  kwHitDisplay.textContent = `${matchedKeywordsSet.size}/${unit.keywords.length}`;
+}
+
+// ============================================================================
+// 3. SHADOWING (WEB SPEECH SYNTHESIS — 0 ĐỒNG)
+// ============================================================================
+function speakText(text, rate = 1.0) {
+  if (!("speechSynthesis" in window)) {
+    showWarn("Trình duyệt này chưa hỗ trợ đọc mẫu (SpeechSynthesis). Hãy mở bằng Chrome hoặc Edge.");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = accentSelect.value || "en-US";
+  utter.rate = rate;
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(utter.lang.toLowerCase()));
+  if (preferred) utter.voice = preferred;
+  window.speechSynthesis.speak(utter);
+}
+
+document.getElementById("btnSpeakSlow").addEventListener("click", () => {
+  speakText(UNITS[currentUnitIdx].sampleEn, 0.8);
+});
+document.getElementById("btnSpeakNormal").addEventListener("click", () => {
+  speakText(UNITS[currentUnitIdx].sampleEn, 1.0);
+});
+document.getElementById("btnStopSpeak").addEventListener("click", () => {
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+});
+
+// ============================================================================
+// 4. NHẬN DIỆN GIỌNG NÓI (SPEECH RECOGNITION) & CHU KỲ 60s - 45s - 30s
+// ============================================================================
+function showWarn(msg) {
+  browserWarn.textContent = "⚠️ " + msg;
+  browserWarn.classList.add("show");
+}
+function hideWarn() {
+  browserWarn.classList.remove("show");
+}
+function showFeedback(msg) {
+  feedbackBanner.innerHTML = msg;
+  feedbackBanner.classList.add("show");
+}
+function hideFeedback() {
+  feedbackBanner.classList.remove("show");
+}
+
+function selectRound(roundNum, sec) {
+  if (isRecording) stopSpeaking(false);
+  currentRound = roundNum;
+  roundDuration = sec;
+  document.querySelectorAll(".round-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById(`roundBtn${roundNum}`).classList.add("active");
+  resetPracticeState(true);
+}
+
+document.querySelectorAll(".round-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    selectRound(parseInt(btn.dataset.round, 10), parseInt(btn.dataset.sec, 10));
+  });
+});
+
+function countWords(str) {
+  const cleaned = (str || "").trim().replace(/[^a-zA-Z0-9'\s-]/g, " ");
+  if (!cleaned) return 0;
+  return cleaned.split(/\s+/).filter(Boolean).length;
+}
+
+function computeWPM(words, elapsedSec) {
+  // Bảo vệ tránh lỗi chia cho 0 (như đã ghi trong Nhật ký câu lệnh PL VII)
+  if (!words || elapsedSec <= 0) return 0;
+  const effectiveSec = Math.max(elapsedSec, 3);
+  return Math.round((words / effectiveSec) * 60);
+}
+
+function updateTranscriptView(isFinalEval = false) {
+  const unit = UNITS[currentUnitIdx];
+  const combined = (finalTranscript + " " + interimTranscript).trim();
+  const lowerCombined = combined.toLowerCase();
+
+  matchedKeywordsSet.clear();
+  unit.keywords.forEach(kw => {
+    const kLow = kw.toLowerCase();
+    // Khớp từ hoặc dạng số nhiều/chia động từ cơ bản
+    const root = kLow.length > 4 ? kLow.slice(0, -1) : kLow;
+    if (lowerCombined.includes(kLow) || (root.length >= 4 && lowerCombined.includes(root))) {
+      matchedKeywordsSet.add(kLow);
+    }
+  });
+
+  // Tô xanh các từ khóa đã phát âm đúng trong bản gỡ băng
+  if (!combined) {
+    transcriptBox.textContent = 'Nhấn "Bắt đầu nói (Micro)" và nói tiếng Anh về chủ đề đã xoay...';
+  } else {
+    const words = finalTranscript.trim() ? finalTranscript.trim().split(/\s+/) : [];
+    const htmlFinal = words.map(w => {
+      const cleanW = w.toLowerCase().replace(/[^a-z]/g, "");
+      const isTarget = unit.keywords.some(kw => {
+        const k = kw.toLowerCase();
+        return cleanW === k || (k.length > 4 && cleanW.startsWith(k.slice(0, -1)));
+      });
+      return isTarget ? `<span class="word-hit">${escapeHtml(w)}</span>` : escapeHtml(w);
+    }).join(" ");
+    const htmlInterim = interimTranscript ? ` <span class="interim-text">${escapeHtml(interimTranscript)}</span>` : "";
+    transcriptBox.innerHTML = htmlFinal + htmlInterim;
+  }
+
+  const totalWords = countWords(combined);
+  wordCountDisplay.textContent = totalWords;
+  const elapsed = startTimeMs ? (Date.now() - startTimeMs) / 1000 : 0;
+  wpmDisplay.textContent = computeWPM(totalWords, elapsed);
+
+  renderKeywords(isFinalEval);
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function resetPracticeState(keepBannerHidden = true) {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+  isRecording = false;
+  secondsLeft = roundDuration;
+  startTimeMs = null;
+  finalTranscript = "";
+  interimTranscript = "";
+  matchedKeywordsSet.clear();
+
+  timerDisplay.textContent = `${secondsLeft}s`;
+  timerDisplay.classList.remove("recording");
+  wordCountDisplay.textContent = "0";
+  wpmDisplay.textContent = "0";
+  btnStartRec.disabled = false;
+  btnStopRec.disabled = true;
+  transcriptBox.textContent = 'Nhấn "Bắt đầu nói (Micro)" và nói tiếng Anh về chủ đề đã xoay...';
+  if (keepBannerHidden) hideFeedback();
+  renderKeywords(false);
+}
+
+function startSpeaking() {
+  hideWarn();
+  hideFeedback();
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    showWarn("Trình duyệt hiện tại không hỗ trợ Web Speech Recognition. Vui lòng dùng Google Chrome / Microsoft Edge trên máy tính hoặc điện thoại Android, hoặc bấm 'Chạy thử Demo' để xem giao diện.");
+    return;
+  }
+
+  resetPracticeState(true);
+  recognition = new SpeechRec();
+  recognition.lang = accentSelect.value || "en-US";
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    isRecording = true;
+    startTimeMs = Date.now();
+    btnStartRec.disabled = true;
+    btnStopRec.disabled = false;
+    timerDisplay.classList.add("recording");
+
+    timerInterval = setInterval(() => {
+      secondsLeft--;
+      timerDisplay.textContent = `${Math.max(secondsLeft, 0)}s`;
+      updateTranscriptView(false);
+      if (secondsLeft <= 0) {
+        stopSpeaking(true);
+      }
+    }, 1000);
+  };
+
+  recognition.onresult = (event) => {
+    let interim = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const piece = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += " " + piece;
+      } else {
+        interim += piece;
+      }
+    }
+    interimTranscript = interim;
+    updateTranscriptView(false);
+  };
+
+  recognition.onerror = (event) => {
+    if (event.error === "not-allowed") {
+      showWarn("Bạn chưa cấp quyền Micro cho trình duyệt. Hãy bấm biểu tượng ổ khóa trên thanh địa chỉ và chọn Cho phép Micro.");
+    } else if (event.error !== "no-speech" && event.error !== "aborted") {
+      showWarn(`Lỗi nhận diện giọng nói (${event.error}). Hãy kiểm tra kết nối mạng và thử lại.`);
+    }
+  };
+
+  recognition.onend = () => {
+    // Tự nối lại nếu trình duyệt tự ngắt giữa chừng khi vẫn còn giờ
+    if (isRecording && secondsLeft > 0) {
+      try { recognition.start(); } catch (e) {}
+    }
+  };
+
+  try {
+    recognition.start();
+  } catch (e) {
+    showWarn("Không thể khởi động Micro. Hãy thử tải lại trang.");
+  }
+}
+
+function stopSpeaking(saveRecord = true) {
+  isRecording = false;
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  if (recognition) {
+    try { recognition.stop(); } catch (e) {}
+  }
+  timerDisplay.classList.remove("recording");
+  btnStartRec.disabled = false;
+  btnStopRec.disabled = true;
+
+  finalTranscript = (finalTranscript + " " + interimTranscript).trim();
+  interimTranscript = "";
+
+  const elapsed = startTimeMs ? Math.min(roundDuration, (Date.now() - startTimeMs) / 1000) : roundDuration;
+  const words = countWords(finalTranscript);
+  const wpm = computeWPM(words, elapsed);
+
+  updateTranscriptView(true);
+  wpmDisplay.textContent = wpm;
+
+  if (saveRecord && words > 0) {
+    const unit = UNITS[currentUnitIdx];
+    const missList = unit.keywords.filter(k => !matchedKeywordsSet.has(k.toLowerCase()));
+    document.getElementById(`roundBtn${currentRound}`).classList.add("done");
+
+    let advice = `🎉 <strong>Hoàn thành Lượt ${currentRound} (${roundDuration}s)!</strong> Bạn nói được <strong>${words} từ</strong> · Tốc độ: <strong>${wpm} WPM</strong> · Phát âm rõ <strong>${matchedKeywordsSet.size}/${unit.keywords.length} từ khóa</strong>.`;
+    if (missList.length > 0) {
+      advice += `<br/>👉 <em>Gợi ý sửa lỗi:</em> Bấm vào các từ tô đỏ (<strong>${missList.join(", ")}</strong>) để nghe lại cách đọc chuẩn, sau đó chuyển sang lượt tiếp theo!`;
+    } else {
+      advice += `<br/>🌟 Tuyệt vời! Bạn đã phát âm rõ tất cả từ khóa mục tiêu. Hãy thử rút ngắn thời gian ở lượt kế tiếp để tăng độ trôi chảy!`;
+    }
+    showFeedback(advice);
+
+    saveHistoryEntry({
+      time: new Date().toLocaleString("vi-VN"),
+      code: (studentCodeInput.value || "HS_9").trim(),
+      unit: `U${unit.id}`,
+      roleLevel: `${ROLES[currentRoleIdx].id} (${currentLevel})`,
+      round: `Lượt ${currentRound} (${roundDuration}s)`,
+      words,
+      wpm,
+      kw: `${matchedKeywordsSet.size}/${unit.keywords.length}`
+    });
+  } else if (saveRecord && words === 0) {
+    showWarn("Chưa thu được giọng nói tiếng Anh. Hãy nói to, rõ hơn hoặc kiểm tra Micro.");
+  }
+}
+
+// Chế độ Chạy thử Demo cho GV & Giám khảo khi test nhanh không cần Micro
+document.getElementById("btnDemoTest").addEventListener("click", () => {
+  if (isRecording) stopSpeaking(false);
+  hideWarn();
+  const unit = UNITS[currentUnitIdx];
+  // Mô phỏng học sinh nói được ~80% đoạn mẫu (cố ý bỏ 1 từ khóa để minh họa tô đỏ)
+  const sentences = unit.sampleEn.split(". ");
+  const simulated = sentences.slice(0, Math.max(2, sentences.length - 1)).join(". ") + ".";
+  finalTranscript = simulated;
+  interimTranscript = "";
+  startTimeMs = Date.now() - 28000; // mô phỏng nói trong 28 giây
+  secondsLeft = Math.max(0, roundDuration - 28);
+  timerDisplay.textContent = `${secondsLeft}s`;
+  stopSpeaking(true);
+});
+
+btnStartRec.addEventListener("click", startSpeaking);
+btnStopRec.addEventListener("click", () => stopSpeaking(true));
+document.getElementById("btnResetSession").addEventListener("click", () => resetPracticeState(true));
+
+// ============================================================================
+// 5. XOAY NGẪU NHIÊN & LỊCH SỬ LOCALSTORAGE + XUẤT CSV
+// ============================================================================
+document.getElementById("btnRandomSpin").addEventListener("click", () => {
+  currentUnitIdx = Math.floor(Math.random() * UNITS.length);
+  currentRoleIdx = Math.floor(Math.random() * ROLES.length);
+  const lvls = ["A2", "B1", "B1P"];
+  currentLevel = lvls[Math.floor(Math.random() * lvls.length)];
+
+  unitSelect.value = currentUnitIdx;
+  roleSelect.value = currentRoleIdx;
+  levelSelect.value = currentLevel;
+
+  comboBox.classList.remove("spin-anim");
+  void comboBox.offsetWidth;
+  comboBox.classList.add("spin-anim");
+
+  document.querySelectorAll(".round-btn").forEach(b => b.classList.remove("done"));
+  renderUnitAndPrompt();
+});
+
+unitSelect.addEventListener("change", () => {
+  currentUnitIdx = parseInt(unitSelect.value, 10);
+  renderUnitAndPrompt();
+});
+roleSelect.addEventListener("change", () => {
+  currentRoleIdx = parseInt(roleSelect.value, 10);
+  renderUnitAndPrompt();
+});
+levelSelect.addEventListener("change", () => {
+  currentLevel = levelSelect.value;
+  renderUnitAndPrompt();
+});
+
+function loadHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveHistoryEntry(entry) {
+  const list = loadHistory();
+  list.unshift(entry);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 100)));
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = loadHistory();
+  if (!list.length) {
+    historyBody.innerHTML = '<tr><td colspan="8" class="empty-msg">Chưa có lượt luyện nói nào được lưu. Hãy hoàn thành 1 lượt nói để ghi nhận tiến bộ!</td></tr>';
+    return;
+  }
+  historyBody.innerHTML = list.map(item => `
+    <tr>
+      <td>${escapeHtml(item.time)}</td>
+      <td><strong>${escapeHtml(item.code)}</strong></td>
+      <td>${escapeHtml(item.unit)}</td>
+      <td>${escapeHtml(item.roleLevel)}</td>
+      <td>${escapeHtml(item.round)}</td>
+      <td>${item.words}</td>
+      <td><strong style="color:var(--green)">${item.wpm}</strong></td>
+      <td>${escapeHtml(item.kw)}</td>
+    </tr>
+  `).join("");
+}
+
+document.getElementById("btnExportCsv").addEventListener("click", () => {
+  const list = loadHistory();
+  if (!list.length) {
+    showWarn("Chưa có dữ liệu lịch sử để xuất tệp CSV.");
+    return;
+  }
+  const header = ["Thoi_gian", "Ma_HS", "Unit", "Vai_tro_Muc", "Luot", "So_tu", "WPM", "Tu_khoa_ro"];
+  const rows = list.map(i => [i.time, i.code, i.unit, i.roleLevel, i.round, i.words, i.wpm, i.kw]
+    .map(v => `"${String(v).replace(/"/g, '""')}"`).join(","));
+  const csv = "\uFEFF" + header.join(",") + "\n" + rows.join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "SoTay_PhanXa_WPM_SpeakCheck9.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("btnClearHistory").addEventListener("click", () => {
+  if (confirm("Bạn có chắc muốn xóa toàn bộ lịch sử WPM lưu trên máy này không?")) {
+    localStorage.removeItem(STORAGE_KEY);
+    renderHistory();
+  }
+});
+
+// Khởi chạy
+initSelectors();
+renderUnitAndPrompt();
+renderHistory();
+if ("speechSynthesis" in window) {
+  window.speechSynthesis.onvoiceschanged = () => {};
+}
+</script>
+</body>
+</html>
