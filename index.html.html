@@ -1,0 +1,2645 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPEAK-CHECK 9 — Trạm Luyện Nói Tiếng Anh 9 Global Success (SPEAK-WHEEL 9)</title>
+  <!-- Tailwind CSS CDN cho giao diện hiện đại, đáp ứng tốt trên điện thoại và máy tính -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font chữ Inter tối ưu hiển thị tiếng Việt & phiên âm IPA -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #F1F5F9;
+      color: #0F172A;
+      -webkit-tap-highlight-color: transparent;
+    }
+    /* Hiệu ứng nhấp nháy khi đang thu âm Micro */
+    @keyframes recPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.65; transform: scale(1.03); }
+    }
+    .rec-pulse { animation: recPulse 1.1s infinite ease-in-out; }
+
+    /* Hiệu ứng xoay tổ hợp SPIN */
+    @keyframes spinPop {
+      0% { transform: scale(0.97); opacity: 0.7; }
+      50% { transform: scale(1.015); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .spin-pop { animation: spinPop 0.4s ease-out; }
+
+    /* Ẩn thanh cuộn ngang nhưng vẫn cuộn mượt trên mobile */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Highlight từ khớp trong transcript */
+    .word-hit {
+      background-color: #DCFCE7;
+      color: #166534;
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      display: inline-block;
+      margin: 1px 0;
+    }
+    .interim-text {
+      color: #64748B;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-14">
+
+  <!-- ====================================================================== -->
+  <!-- HEADER: THƯƠNG HIỆU DỰ ÁN KHKT SPEAK-WHEEL 9 & BẢO MẬT 0 ĐỒNG          -->
+  <!-- ====================================================================== -->
+  <header class="bg-gradient-to-r from-[#0F294A] via-[#14365D] to-[#1D6FA5] text-white shadow-lg sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-2xl shadow-inner">
+          🎯
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold tracking-tight flex items-center gap-2">
+            SPEAK-CHECK 9
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-400 text-slate-900">GLOBAL SUCCESS</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-sky-100/90">
+            Trạm Luyện Nói Tiếng Anh 9 (12 Unit · A1–B2) — Đồng bộ Bàn xoay SPEAK-WHEEL 9
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btnTestAudioTop" type="button" class="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500/90 hover:bg-emerald-400 text-white transition flex items-center gap-1.5 shadow">
+          🔊 Kiểm tra âm thanh
+        </button>
+        <div class="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/15 border border-white/25 flex items-center gap-1.5" title="Xử lý trực tiếp trên trình duyệt, không lưu tệp ghi âm lên máy chủ">
+          🔒 0 đồng · Không lưu ghi âm
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- THÔNG BÁO TRẠNG THÁI TOÀN CỤC (THAY THẾ HOÀN TOÀN ALERT/CONFIRM) -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-[90vw] pointer-events-none"></div>
+
+  <main class="max-w-6xl mx-auto px-3 sm:px-4 mt-4 space-y-4">
+
+    <!-- ==================================================================== -->
+    <!-- KHU VỰC 1: BẢNG ĐIỀU KHIỂN TỔ HỢP (SPIN) & CÀI ĐẶT ÂM THANH WEB      -->
+    <!-- ==================================================================== -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-800 font-extrabold text-sm flex items-center justify-center">1</span>
+          <h2 class="font-extrabold text-slate-800 text-base sm:text-lg">Chọn hoặc Xoay Tổ hợp Giao tiếp (SPIN)</h2>
+        </div>
+        <span class="text-xs font-bold px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+          12 Unit × 8 Vai trò × 4 Cấp độ A1–B2
+        </span>
+      </div>
+
+      <!-- 4 Bộ chọn chính: Unit, Vai trò, Ngữ cảnh, Cấp độ -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <div>
+          <label for="unitSelect" class="block text-xs font-bold text-slate-500 uppercase mb-1">Đĩa 1 · Chủ đề (12 Unit)</label>
+          <select id="unitSelect" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"></select>
+        </div>
+        <div>
+          <label for="roleSelect" class="block text-xs font-bold text-slate-500 uppercase mb-1">Đĩa 2 · Vai trò giao tiếp</label>
+          <select id="roleSelect" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"></select>
+        </div>
+        <div>
+          <label for="contextSelect" class="block text-xs font-bold text-slate-500 uppercase mb-1">Ngữ cảnh giao tiếp</label>
+          <select id="contextSelect" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"></select>
+        </div>
+        <div>
+          <label for="levelSelect" class="block text-xs font-bold text-slate-500 uppercase mb-1">Đĩa 3 · Cấp độ (A1–B2)</label>
+          <select id="levelSelect" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+            <option value="A1">🔵 A1 — Khởi động (Từ đơn & câu ngắn)</option>
+            <option value="A2" selected>🟢 A2 — Cơ bản (Khung Mở–Thân–Kết)</option>
+            <option value="B1">🟡 B1 — Khá (Từ nối & lập luận)</option>
+            <option value="B2">🔴 B2 / B1+ — Nâng cao (Mở rộng & phản biện)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Hàng nút Xoay SPIN + Mã HS + Cài đặt âm thanh Web -->
+      <div class="flex flex-wrap items-center gap-2.5 pt-3 border-t border-slate-100">
+        <button id="btnRandomSpin" type="button" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-sm shadow-md transition active:scale-95 flex items-center gap-2">
+          🎲 Xoay ngẫu nhiên (SPIN)
+        </button>
+
+        <input id="studentCode" type="text" placeholder="Mã HS ẩn danh (VD: TN01)" class="px-3 py-2.5 rounded-xl border border-slate-300 text-sm font-medium w-44 focus:ring-2 focus:ring-sky-500 outline-none" />
+
+        <div class="flex flex-wrap items-center gap-2 ml-auto bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
+          <span class="text-xs font-bold text-slate-500">🎧 Âm thanh Web:</span>
+          <select id="accentSelect" class="px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-700">
+            <option value="en-US">🇺🇸 Anh - Mỹ</option>
+            <option value="en-GB">🇬🇧 Anh - Anh</option>
+          </select>
+          <select id="voiceSelect" class="px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-medium text-slate-700 max-w-[155px]" title="Chọn giọng đọc từ trình duyệt">
+            <option value="">Giọng tự động</option>
+          </select>
+          <select id="rateSelect" class="px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-700" title="Tốc độ đọc mặc định">
+            <option value="0.75">🐢 0.75x</option>
+            <option value="0.85">🚶 0.85x</option>
+            <option value="1.0" selected>🔊 1.0x</option>
+            <option value="1.15">⚡ 1.15x</option>
+          </select>
+          <label class="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 cursor-pointer" title="Tự động tải âm thanh phát âm chuẩn bản xứ từ Từ điển Web miễn phí cho từ đơn, tự chuyển Web Speech khi ngoại tuyến">
+            <input type="checkbox" id="chkWebDictAudio" checked class="rounded text-sky-600" />
+            <span>Audio Web</span>
+          </label>
+          <label class="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 cursor-pointer" title="Âm báo xoay đĩa & bắt đầu/kết thúc thu âm">
+            <input type="checkbox" id="chkSfx" checked class="rounded text-sky-600" />
+            <span>Hiệu ứng</span>
+          </label>
+          <button id="btnGlobalStopAudio" type="button" class="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold transition">
+            ⏹ Dừng tiếng
+          </button>
+        </div>
+      </div>
+
+      <!-- Khung tóm tắt tổ hợp hiện tại -->
+      <div id="comboBanner" class="mt-4 rounded-xl p-4 border-l-4 border-emerald-600 bg-emerald-50/70 transition-all">
+        <div class="flex flex-wrap items-center gap-2 mb-1.5">
+          <span id="pillUnit" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-white text-slate-800 shadow-sm border border-slate-200"></span>
+          <span id="pillRole" class="text-xs font-bold px-2.5 py-1 rounded-full bg-white text-amber-800 shadow-sm border border-amber-200"></span>
+          <span id="pillContext" class="text-xs font-bold px-2.5 py-1 rounded-full bg-white text-sky-800 shadow-sm border border-sky-200"></span>
+          <span id="pillLevel" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-emerald-600 text-white shadow-sm"></span>
+          <span id="pillGrammar" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-200 ml-auto"></span>
+        </div>
+        <p id="promptTask" class="text-sm sm:text-base font-bold text-slate-900"></p>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- THANH ĐIỀU HƯỚNG 6 PHÂN HỆ LUYỆN TẬP & HỒ SƠ KHKT                    -->
+    <!-- ==================================================================== -->
+    <nav class="bg-white rounded-2xl border border-slate-200 shadow-sm p-1.5 flex gap-1.5 overflow-x-auto no-scrollbar" role="tablist">
+      <button type="button" data-tab="speakcheck" class="tab-btn flex-1 min-w-[140px] px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 bg-[#14365D] text-white shadow">
+        🎙 SPEAK-CHECK
+      </button>
+      <button type="button" data-tab="vocab" class="tab-btn flex-1 min-w-[130px] px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
+        📚 Từ vựng
+      </button>
+      <button type="button" data-tab="qa" class="tab-btn flex-1 min-w-[135px] px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
+        ❓ Câu hỏi ngắn
+      </button>
+      <button type="button" data-tab="dialogue" class="tab-btn flex-1 min-w-[130px] px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
+        💬 Hội thoại
+      </button>
+      <button type="button" data-tab="patterns" class="tab-btn flex-1 min-w-[135px] px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
+        🧩 Mẫu câu
+      </button>
+      <button type="button" data-tab="khkt" class="tab-btn flex-1 min-w-[135px] px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
+        📁 Hồ sơ KHKT
+      </button>
+    </nav>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 1: TRẠM THỰC HÀNH NÓI SPEAK-CHECK (SHADOWING + 60-45-30s + WPM)  -->
+    <!-- ==================================================================== -->
+    <div id="panel-speakcheck" class="tab-panel space-y-4">
+      <!-- Bước 2: Giàn giáo & Shadowing -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-sm flex items-center justify-center">2</span>
+            <h3 class="font-extrabold text-slate-800 text-base">Giàn giáo Khung câu & Nghe mẫu (SCAN · SHADOWING)</h3>
+          </div>
+          <span id="shadowStatusBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Sẵn sàng đọc mẫu</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Khung giàn giáo theo cấp độ A1–B2 -->
+          <div class="bg-slate-50 rounded-xl border border-slate-200 p-4">
+            <div class="text-xs font-extrabold uppercase text-sky-700 mb-2 flex items-center justify-between">
+              <span>🧭 Khung giàn giáo theo cấp độ</span>
+              <span id="scaffoldLevelTag" class="px-2 py-0.5 rounded bg-sky-100 text-sky-800"></span>
+            </div>
+            <ul id="scaffoldList" class="space-y-1.5 text-sm text-slate-700"></ul>
+          </div>
+
+          <!-- Bài nói mẫu theo đúng Unit & Cấp độ -->
+          <div class="bg-sky-50/60 rounded-xl border border-sky-200 p-4 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-extrabold uppercase text-sky-800 mb-1.5 flex items-center justify-between">
+                <span>🎧 Đoạn mẫu Shadowing (tự điều chỉnh theo cấp độ)</span>
+                <span id="sampleWordCount" class="text-[11px] font-bold text-sky-600"></span>
+              </div>
+              <p id="sampleTextEn" class="text-sm sm:text-base text-slate-900 font-medium leading-relaxed"></p>
+              <p id="sampleTextVi" class="text-xs text-slate-500 italic mt-2"></p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-sky-200/70">
+              <button id="btnSpeakSlow" type="button" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-bold transition shadow-sm">
+                🐢 Nghe chậm 0.8x
+              </button>
+              <button id="btnSpeakNormal" type="button" class="px-3.5 py-2 rounded-xl bg-[#14365D] hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition shadow-sm">
+                🔊 Nghe chuẩn 1.0x
+              </button>
+              <button id="btnStopSpeak" type="button" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs sm:text-sm font-bold transition">
+                ⏹ Dừng
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Từ khóa mục tiêu của Unit -->
+        <div class="mt-4">
+          <div class="text-xs font-bold text-slate-500 mb-2">
+            Từ khóa mục tiêu của Unit (Bấm từng từ để nghe phát âm bản xứ từ Web · Khi nói: <span class="text-emerald-700">Xanh = Rõ</span>, <span class="text-rose-600">Đỏ = Cần đọc lại</span>):
+          </div>
+          <div id="kwGrid" class="flex flex-wrap gap-2"></div>
+        </div>
+      </section>
+
+      <!-- Bước 3: Chu kỳ 60s - 45s - 30s & Chấm điểm WPM -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold text-sm flex items-center justify-center">3</span>
+            <h3 class="font-extrabold text-slate-800 text-base">Thực hành Nói & Phản hồi Tức thì (Chu kỳ 60s – 45s – 30s)</h3>
+          </div>
+          <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            Kỹ thuật 4-3-2 cải tiến · Nation (1989)
+          </span>
+        </div>
+
+        <!-- 3 Nút chọn lượt -->
+        <div class="grid grid-cols-3 gap-2.5 mb-4">
+          <button type="button" class="round-btn p-3 rounded-xl border-2 border-sky-600 bg-sky-50 text-slate-900 font-bold text-center transition" data-round="1" data-sec="60" id="roundBtn1">
+            <div class="text-xs sm:text-sm font-extrabold">Lượt 1 · 60 giây</div>
+            <div class="text-[11px] text-slate-500 font-medium hidden sm:block">Lên ý tưởng & nói đủ ý</div>
+          </button>
+          <button type="button" class="round-btn p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-bold text-center transition hover:border-sky-400" data-round="2" data-sec="45" id="roundBtn2">
+            <div class="text-xs sm:text-sm font-extrabold">Lượt 2 · 45 giây</div>
+            <div class="text-[11px] text-slate-500 font-medium hidden sm:block">Sửa từ đỏ & nói mượt hơn</div>
+          </button>
+          <button type="button" class="round-btn p-3 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700 font-bold text-center transition hover:border-sky-400" data-round="3" data-sec="30" id="roundBtn3">
+            <div class="text-xs sm:text-sm font-extrabold">Lượt 3 · 30 giây</div>
+            <div class="text-[11px] text-slate-500 font-medium hidden sm:block">Phản xạ tốc độ cao</div>
+          </button>
+        </div>
+
+        <!-- Thanh nút điều khiển Micro -->
+        <div class="flex flex-wrap items-center gap-2.5 mb-3">
+          <button id="btnStartRec" type="button" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow transition flex items-center gap-2">
+            🎙 Bắt đầu nói (Micro)
+          </button>
+          <button id="btnStopRec" type="button" disabled class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-45 text-white font-bold text-sm shadow transition flex items-center gap-2">
+            ⏹ Dừng & Chấm điểm
+          </button>
+          <button id="btnResetSession" type="button" class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold text-sm transition">
+            🔄 Làm lại
+          </button>
+          <button id="btnDemoTest" type="button" class="px-4 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 font-bold text-sm transition" title="Mô phỏng nhanh khi thiết bị không có micro">
+            ⚡ Chạy thử Demo
+          </button>
+          <button id="btnToggleManual" type="button" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm transition ml-auto">
+            ⌨️ Nhập text kiểm tra
+          </button>
+        </div>
+
+        <!-- Hộp nhập văn bản dự phòng khi không có Micro -->
+        <div id="manualInputBox" class="hidden mb-3 p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+          <div class="text-xs font-bold text-slate-600">Chế độ kiểm tra dự phòng (khi thiết bị không có Micro hoặc dùng trình duyệt chưa hỗ trợ SpeechRecognition):</div>
+          <textarea id="manualTextarea" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Gõ hoặc dán bài nói tiếng Anh của em vào đây rồi bấm Chấm ngay..."></textarea>
+          <div class="flex gap-2">
+            <button id="btnEvalManual" type="button" class="px-4 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold">✅ Chấm điểm đoạn này</button>
+            <button id="btnFillSampleManual" type="button" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 text-xs font-bold">📋 Dán bài mẫu để test</button>
+          </div>
+        </div>
+
+        <!-- Cảnh báo trình duyệt & Phản hồi sau lượt nói -->
+        <div id="browserWarn" class="hidden mb-3 p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs sm:text-sm font-medium"></div>
+        <div id="feedbackBanner" class="hidden mb-3 p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 text-xs sm:text-sm leading-relaxed"></div>
+
+        <!-- 4 Thẻ chỉ số trực tiếp -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-3">
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+            <div id="timerDisplay" class="text-2xl font-extrabold text-slate-900">60s</div>
+            <div class="text-[11px] font-bold text-slate-500 uppercase">Thời gian còn lại</div>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+            <div id="wordCountDisplay" class="text-2xl font-extrabold text-slate-900">0</div>
+            <div class="text-[11px] font-bold text-slate-500 uppercase">Số từ đã nói</div>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+            <div id="wpmDisplay" class="text-2xl font-extrabold text-emerald-700">0</div>
+            <div class="text-[11px] font-bold text-slate-500 uppercase">Tốc độ (WPM)</div>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+            <div id="kwHitDisplay" class="text-2xl font-extrabold text-sky-700">0/8</div>
+            <div class="text-[11px] font-bold text-slate-500 uppercase">Từ khóa rõ</div>
+          </div>
+        </div>
+
+        <!-- Bảng ước lượng điểm Rubric 4 tiêu chí -->
+        <div id="rubricEstimateBox" class="hidden mb-3 grid grid-cols-2 sm:grid-cols-5 gap-2 p-3 rounded-xl bg-indigo-50/70 border border-indigo-200 text-center">
+          <div>
+            <div class="text-[11px] font-bold text-indigo-700">Phát âm (2.5)</div>
+            <div id="rubPron" class="text-lg font-extrabold text-slate-900">-</div>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-indigo-700">Từ vựng (2.5)</div>
+            <div id="rubLex" class="text-lg font-extrabold text-slate-900">-</div>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-indigo-700">Trôi chảy (2.5)</div>
+            <div id="rubFlu" class="text-lg font-extrabold text-slate-900">-</div>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-indigo-700">Nhiệm vụ (2.5)</div>
+            <div id="rubTask" class="text-lg font-extrabold text-slate-900">-</div>
+          </div>
+          <div class="col-span-2 sm:col-span-1 bg-white rounded-lg p-1 border border-indigo-200">
+            <div class="text-[11px] font-bold text-emerald-700">Ước lượng (/10)</div>
+            <div id="rubTotal" class="text-lg font-extrabold text-emerald-700">-</div>
+          </div>
+        </div>
+
+        <!-- Bản gỡ băng trực tiếp -->
+        <div class="text-xs font-bold text-slate-500 mb-1.5">Bản gỡ băng trực tiếp (Live Speech-to-Text — từ khóa phát âm đúng được tô xanh):</div>
+        <div id="transcriptBox" class="min-h-[110px] p-4 rounded-xl bg-slate-50 border-2 border-dashed border-slate-300 text-sm sm:text-base text-slate-800 whitespace-pre-wrap leading-relaxed">
+          Nhấn "Bắt đầu nói (Micro)" và nói tiếng Anh theo chủ đề & cấp độ đã chọn...
+        </div>
+      </section>
+
+      <!-- Bước 4: Sổ tay Phản xạ WPM -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 font-extrabold text-sm flex items-center justify-center">4</span>
+            <h3 class="font-extrabold text-slate-800 text-base">Sổ tay Phản xạ WPM (Lưu cục bộ trên thiết bị)</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btnExportCsv" type="button" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-bold transition">
+              📥 Xuất CSV (Excel)
+            </button>
+            <button id="btnAskClearHistory" type="button" class="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold transition">
+              🗑 Xóa lịch sử
+            </button>
+          </div>
+        </div>
+
+        <!-- Thanh xác nhận xóa lịch sử nội tuyến (KHÔNG dùng window.confirm) -->
+        <div id="clearConfirmBar" class="hidden mb-3 p-3 rounded-xl bg-rose-50 border border-rose-300 flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs sm:text-sm font-bold text-rose-800">Xác nhận xóa toàn bộ lịch sử WPM lưu trên thiết bị này?</span>
+          <div class="flex gap-2">
+            <button id="btnConfirmClearYes" type="button" class="px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold">Xóa ngay</button>
+            <button id="btnConfirmClearNo" type="button" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 text-xs font-bold">Hủy</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700">
+                <th class="p-2.5 rounded-tl-lg">Thời gian</th>
+                <th class="p-2.5">Mã HS</th>
+                <th class="p-2.5">Unit</th>
+                <th class="p-2.5">Vai trò / Cấp</th>
+                <th class="p-2.5">Lượt</th>
+                <th class="p-2.5">Số từ</th>
+                <th class="p-2.5">WPM</th>
+                <th class="p-2.5">Từ khóa</th>
+                <th class="p-2.5 rounded-tr-lg">Rubric</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 2: BỘ TỪ VỰNG THEO UNIT & KIỂM TRA PHÁT ÂM TỪNG TỪ               -->
+    <!-- ==================================================================== -->
+    <div id="panel-vocab" class="tab-panel hidden space-y-4">
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 id="vocabHeaderTitle" class="font-extrabold text-slate-800 text-base sm:text-lg">📚 Bộ Từ vựng Unit</h3>
+            <p class="text-xs text-slate-500">Bám sát SGK Tiếng Anh 9 Global Success · Có phiên âm IPA, âm thanh bản xứ Web & chấm phát âm trực tiếp</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="vocabLevelFilter" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 bg-white">
+              <option value="ALL">Tất cả cấp độ (A1–B2)</option>
+              <option value="A1">🔵 Chỉ A1</option>
+              <option value="A2">🟢 Chỉ A2</option>
+              <option value="B1">🟡 Chỉ B1</option>
+              <option value="B2">🔴 Chỉ B2</option>
+            </select>
+            <button id="btnPlayAllVocab" type="button" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-sm transition">
+              ▶ Đọc toàn bộ từ vựng
+            </button>
+          </div>
+        </div>
+
+        <!-- Hộp kết quả Check phát âm trực tiếp cho tab Từ vựng / Q&A / Hội thoại / Mẫu câu -->
+        <div id="vocabGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 3: CÂU HỎI NGẮN PHẢN XẠ (SHORT Q&A CHECK)                        -->
+    <!-- ==================================================================== -->
+    <div id="panel-qa" class="tab-panel hidden space-y-4">
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h3 id="qaHeaderTitle" class="font-extrabold text-slate-800 text-base sm:text-lg">❓ Luyện Câu hỏi ngắn (Part 1 & Part 3 Speaking)</h3>
+            <p class="text-xs text-slate-500">Phân cấp từ A1 → B2 · Bấm Nghe câu hỏi rồi bấm Micro để trả lời và kiểm tra từ khóa tức thì</p>
+          </div>
+          <button id="btnPlayAllQA" type="button" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-sm">
+            ▶ Nghe toàn bộ Q&A
+          </button>
+        </div>
+        <div id="qaList" class="space-y-3"></div>
+      </section>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 4: HỘI THOẠI NHẬP VAI THEO NGỮ CẢNH (DIALOGUE ROLEPLAY)          -->
+    <!-- ==================================================================== -->
+    <div id="panel-dialogue" class="tab-panel hidden space-y-4">
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 id="dialogueHeaderTitle" class="font-extrabold text-slate-800 text-base sm:text-lg">💬 Hội thoại giao tiếp & Everyday English</h3>
+            <p id="dialogueSubtitle" class="text-xs text-slate-500"></p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="btnPlayDialogue" type="button" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-sm">
+              ▶ Nghe cả hội thoại
+            </button>
+            <button id="btnStartRoleplay" type="button" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">
+              🎭 Nhập vai B (Máy hỏi – Em đáp)
+            </button>
+          </div>
+        </div>
+
+        <div id="roleplayBanner" class="hidden mb-3 p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-xs sm:text-sm text-emerald-900 font-semibold"></div>
+        <div id="dialogueList" class="space-y-2.5"></div>
+      </section>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 5: LUYỆN MẪU CÂU & CẤU TRÚC NGỮ PHÁP (SENTENCE PATTERNS)         -->
+    <!-- ==================================================================== -->
+    <div id="panel-patterns" class="tab-panel hidden space-y-4">
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h3 id="patternHeaderTitle" class="font-extrabold text-slate-800 text-base sm:text-lg">🧩 Luyện Mẫu câu & Ngữ pháp Trọng tâm</h3>
+            <p class="text-xs text-slate-500">Áp dụng trực tiếp cấu trúc ngữ pháp & Everyday English của Unit (A1 → B2) để nói đúng và trôi chảy</p>
+          </div>
+          <button id="btnPlayAllPatterns" type="button" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-sm">
+            ▶ Nghe toàn bộ mẫu câu
+          </button>
+        </div>
+        <div id="patternsList" class="space-y-3"></div>
+      </section>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 6: HỒ SƠ KHKT SPEAK-WHEEL 9 (LƯU TRỮ TOÀN BỘ NỘI DUNG DỰ ÁN)     -->
+    <!-- ==================================================================== -->
+    <div id="panel-khkt" class="tab-panel hidden space-y-4">
+      <!-- Tổng quan Dự án & Quy trình SPIN-SCAN-SPEAK -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+        <h3 class="font-extrabold text-slate-900 text-base sm:text-lg mb-2">📁 Hồ sơ Lưu trữ Dự án KHKT 2026–2027: SPEAK-WHEEL 9</h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">
+          <strong>Tên đề tài:</strong> Thiết kế và thử nghiệm bộ công cụ lai ghép SPEAK-WHEEL 9 nhằm giảm lo âu ngoại ngữ và nâng cao năng lực nói tiếng Anh cho học sinh lớp 9 với chi phí thấp (Lĩnh vực: Khoa học xã hội và hành vi).
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200">
+            <div class="font-extrabold text-sky-900 text-sm mb-1">BƯỚC 1: SPIN (XOAY)</div>
+            <p class="text-xs text-slate-700">Bàn xoay 3 đĩa đồng tâm Fomex 3mm (tỉ lệ Ø30 : Ø21 : Ø13 cm hoặc bản A4 Ø18 : Ø12,6 : Ø7,8 cm, có 2 long đền nhựa tái chế chống ma sát). Kết hợp 12 Unit × 8 Vai trò × 3–4 Cấp độ.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200">
+            <div class="font-extrabold text-amber-900 text-sm mb-1">BƯỚC 2: SCAN (QUÉT & NGHE)</div>
+            <p class="text-xs text-slate-700">Quét mã QR tĩnh trên Đĩa 1 (?unit=1 → ?unit=12) mở ngay SPEAK-CHECK 9 (0 đồng). Nghe đọc mẫu Shadowing tốc độ 0.8x hoặc 1.0x trong 30 giây.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div class="font-extrabold text-emerald-900 text-sm mb-1">BƯỚC 3: SPEAK (60–45–30s)</div>
+            <p class="text-xs text-slate-700">Kỹ thuật 4-3-2 cải tiến thành 3 lượt 60s–45s–30s. Gỡ băng trực tiếp, tô xanh/đỏ từ khóa, đo WPM tức thì, lưu cục bộ & xuất CSV chạy T-test Excel.</p>
+          </div>
+        </div>
+
+        <!-- Trình tạo & sao chép 12 Link QR -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <h4 class="font-extrabold text-slate-800 text-sm">🔗 12 Đường dẫn gắn Mã QR tĩnh (Đĩa 1 — U1 đến U12)</h4>
+            <div class="flex gap-2 items-center">
+              <input id="baseUrlInput" type="text" class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs w-64 bg-white" value="https://tongtaitld11-max.github.io/SPEAK-WHEEL-9/" />
+              <button id="btnUpdateQrLinks" type="button" class="px-3 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-bold">Cập nhật link</button>
+            </div>
+          </div>
+          <div id="qrLinksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs"></div>
+        </div>
+
+        <!-- Khảo sát FLCAS 12 mục tương tác -->
+        <div class="p-4 rounded-xl bg-amber-50/50 border border-amber-200 mb-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <h4 class="font-extrabold text-slate-800 text-sm">📊 Phiếu khảo sát Lo âu Ngoại ngữ FLCAS 12 mục (Tự động đảo chiều câu 3*, 7*, 11*)</h4>
+            <button id="btnCalcFlcas" type="button" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">Tính điểm FLCAS</button>
+          </div>
+          <div id="flcasContainer" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+          <div id="flcasResult" class="hidden mt-3 p-3 rounded-lg bg-white border border-amber-300 text-xs sm:text-sm font-bold text-slate-800"></div>
+        </div>
+
+        <!-- Rubric 4 tiêu chí & Kịch bản thuyết trình 5 phút -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <h4 class="font-extrabold text-slate-800 text-sm mb-2">📝 Rubric Chấm Nói 4 Tiêu chí (Thang 10 điểm)</h4>
+            <ul class="text-xs text-slate-700 space-y-1.5">
+              <li><strong>1. Phát âm & Ngữ điệu (2,5đ):</strong> Rõ âm cuối, đúng trọng âm, ngữ điệu tự nhiên.</li>
+              <li><strong>2. Từ vựng & Ngữ pháp (2,5đ):</strong> Dùng từ vựng chủ đề lớp 9, câu ghép/từ nối chính xác.</li>
+              <li><strong>3. Độ trôi chảy & Mạch lạc (2,5đ):</strong> Xuất sắc ≥ 85 WPM; Khá 65–84 WPM; TB 45–64 WPM; Cần cố gắng &lt; 45 WPM.</li>
+              <li><strong>4. Phản xạ giao tiếp & Nhiệm vụ (2,5đ):</strong> Trả lời đủ 4 gợi ý Part 2 & 2 câu phản xạ Part 3.</li>
+              <li class="text-slate-500 pt-1 italic">*Chấm độc lập bởi 02 GV Tiếng Anh (chênh lệch &gt; 1,0đ thống nhất lại); kiểm định T-test & Pearson r trên Excel.</li>
+            </ul>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <h4 class="font-extrabold text-slate-800 text-sm mb-2">🎤 Khung Kịch bản Thuyết trình Song hành 5 Phút</h4>
+            <ul class="text-xs text-slate-700 space-y-1.5">
+              <li><strong>0:00 – 0:45 (HS1):</strong> Đặt vấn đề 3 rào cản (Lo âu, bí ý tưởng, chi phí app 500k–1,5tr/năm) & giới thiệu đề tài.</li>
+              <li><strong>0:45 – 1:45 (HS1):</strong> 3 lý thuyết (Vygotsky, Krashen, Nation 4-3-2) & phần cứng Fomex 3 tầng (~125.000đ).</li>
+              <li><strong>1:45 – 2:30 (HS2):</strong> Trạm SPEAK-CHECK 9 (0 đồng, Web Speech API, không lưu file ghi âm).</li>
+              <li><strong>2:30 – 4:00 (HS1 & HS2):</strong> Demo trực tiếp SPIN–SCAN–SPEAK (Unit 3 · Health Advisor · B1 · 30s).</li>
+              <li><strong>4:00 – 5:00 (HS2 & HS1):</strong> Kết quả thực nghiệm 8 tuần (FLCAS, Rubric, WPM, p &lt; 0,05) & nhân rộng.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- HỘP KIỂM TRA PHÁT ÂM NHANH DẠNG NỔI (DÙNG CHUNG CHO TỪ VỰNG / Q&A / HỘI THOẠI / MẪU CÂU) -->
+    <div id="quickCheckModal" class="hidden fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl max-w-lg w-full p-5 shadow-2xl border border-slate-200 space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 id="qcTitle" class="font-extrabold text-slate-900 text-base">🎙 Kiểm tra phát âm cụ thể</h4>
+          <button id="btnCloseQc" type="button" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold">✕</button>
+        </div>
+        <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200">
+          <div class="text-[11px] font-bold uppercase text-sky-700 mb-1">Mục tiêu cần đọc / trả lời:</div>
+          <div id="qcTargetText" class="text-base font-bold text-slate-900"></div>
+          <div id="qcTargetHint" class="text-xs text-slate-600 mt-1"></div>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <button id="btnQcListen" type="button" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold">🔊 Nghe mẫu</button>
+          <button id="btnQcListenSlow" type="button" class="px-3.5 py-2 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-800 text-xs font-bold">🐢 Nghe chậm</button>
+          <button id="btnQcMic" type="button" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5">🎙 Bấm nói ngay</button>
+          <button id="btnQcSim" type="button" class="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 text-xs font-bold ml-auto">⚡ Test mẫu</button>
+        </div>
+
+        <div id="qcStatus" class="text-xs font-semibold text-slate-500">Nhấn "Bấm nói ngay" và đọc to, rõ bằng tiếng Anh.</div>
+
+        <div id="qcResultBox" class="hidden p-3.5 rounded-xl border text-sm space-y-1.5"></div>
+
+        <!-- Dự phòng nhập tay nếu máy không có mic -->
+        <div class="pt-2 border-t border-slate-100 flex gap-2">
+          <input id="qcManualInput" type="text" class="flex-1 px-3 py-1.5 rounded-lg border border-slate-300 text-xs outline-none focus:ring-2 focus:ring-sky-500" placeholder="Hoặc gõ câu em nói để check khi không có Micro..." />
+          <button id="btnQcManualEval" type="button" class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-bold">Check</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-6xl mx-auto px-4 mt-8 text-center text-xs text-slate-500 space-y-1">
+    <p><strong>SPEAK-CHECK 9</strong> · Đồng bộ SGK Tiếng Anh 9 Global Success (GDPT 2018) & Bàn xoay <strong>SPEAK-WHEEL 9</strong>.</p>
+    <p>Hỗ trợ tham số mã QR: <code>?unit=1</code> đến <code>?unit=12</code> · Mở tốt nhất trên <strong>Google Chrome</strong> hoặc <strong>Microsoft Edge</strong> (cấp quyền Micro).</p>
+  </footer>
+
+<script>
+// ============================================================================
+// 1. DỮ LIỆU CHUẨN 12 UNIT TIẾNG ANH 9 - GLOBAL SUCCESS (A1, A2, B1, B2)
+// ============================================================================
+const ROLES = [
+  { id: "Tour Guide", label: "Tour Guide (Hướng dẫn viên)", intro: "As a friendly tour guide, welcome your guests and" },
+  { id: "Interviewer", label: "Club Interviewer (Phỏng vấn CLB)", intro: "As a school English club interviewer, introduce the topic and" },
+  { id: "60s Vlogger", label: "60s Vlogger (Người làm Vlog 60s)", intro: "Imagine filming a 60-second English vlog; greet your viewers and" },
+  { id: "Advisor", label: "Student Advisor (Cố vấn học đường)", intro: "As a helpful student advisor, give practical advice and" },
+  { id: "Foreign Friend", label: "Foreign Friend (Bạn quốc tế)", intro: "Chatting naturally with a foreign pen pal, share your ideas and" },
+  { id: "Reporter", label: "School Reporter (Phóng viên trường)", intro: "Reporting for your school English newsletter, summarize key facts and" },
+  { id: "Debater", label: "Debater (Người tranh biện)", intro: "Speaking in a mini classroom debate, express your viewpoint clearly and" },
+  { id: "Presenter", label: "Presenter (Diễn giả thuyết trình)", intro: "Presenting in front of your class, organize clear points and" }
+];
+
+const CONTEXTS = [
+  { id: "Classroom", label: "🏫 Giờ học Speaking trên lớp" },
+  { id: "EnglishClub", label: "🎤 Câu lạc bộ Tiếng Anh trường" },
+  { id: "RealTrip", label: "🧭 Giao tiếp thực tế / Du lịch" },
+  { id: "OnlineCall", label: "💻 Giao lưu trực tuyến quốc tế" },
+  { id: "ExamPrep", label: "📝 Ôn thi nói Học kỳ / Vào lớp 10" }
+];
+
+const LEVEL_INFO = {
+  A1: {
+    name: "Mức A1 — Khởi động",
+    badge: "bg-sky-600 text-white",
+    border: "border-sky-600 bg-sky-50/70",
+    frames: [
+      "Mở đầu: \"Hello! My name is... Today I talk about...\"",
+      "Ý 1: \"It is very nice / good / useful.\"",
+      "Ý 2: \"I like it because...\"",
+      "Kết thúc: \"Thank you for listening!\""
+    ]
+  },
+  A2: {
+    name: "Mức A2 — Cơ bản (Xanh)",
+    badge: "bg-emerald-600 text-white",
+    border: "border-emerald-600 bg-emerald-50/70",
+    frames: [
+      "Mở đầu: \"Hello everyone! Today I would like to talk about...\"",
+      "Ý chính 1: \"First, it is very... because...\"",
+      "Ý chính 2: \"Second, we can see / do...\"",
+      "Kết thúc: \"In short, I really like / think... Thank you!\""
+    ]
+  },
+  B1: {
+    name: "Mức B1 — Khá (Vàng)",
+    badge: "bg-amber-600 text-white",
+    border: "border-amber-500 bg-amber-50/70",
+    frames: [
+      "Mở đầu: \"To begin with, I'd like to share my thoughts on...\"",
+      "Phát triển ý: \"Moreover / In addition, one big advantage is that...\"",
+      "Đối chiếu: \"On the other hand, we should pay attention to...\"",
+      "Kết luận: \"As a result, I believe that...\""
+    ]
+  },
+  B2: {
+    name: "Mức B2 / B1+ — Nâng cao (Hồng/Đỏ)",
+    badge: "bg-rose-600 text-white",
+    border: "border-rose-600 bg-rose-50/70",
+    frames: [
+      "Dẫn nhập ấn tượng: \"Have you ever wondered how ... shapes our daily life?\"",
+      "Lập luận sâu: \"From my perspective, ... plays a vital role because... For instance, ...\"",
+      "Phản biện / Mở rộng: \"Admittedly, there are challenges such as...; however, ...\"",
+      "Thông điệp chốt: \"All in all, small actions today can make a lasting difference tomorrow!\""
+    ]
+  }
+};
+
+// Toàn bộ 12 Unit bám sát sách Tiếng Anh 9 - Global Success
+const UNITS = [
+  {
+    id: 1,
+    title: "Unit 1: Local Community",
+    vi: "Cộng đồng địa phương",
+    grammar: "Wh- + to-V & Phrasal verbs (1)",
+    everyday: "Seeking help & responding",
+    topicPrompt: "describe a traditional handicraft, local speciality, or community helper in your neighbourhood",
+    keywords: ["community", "artisan", "handicraft", "speciality", "preserve", "neighbour", "facilities", "suburb"],
+    samples: {
+      A1: "Hello! I live in a nice community. My neighbours are kind. We have parks and shops. My hometown has good local food. I love my home.",
+      A2: "Hello everyone! Today I would like to talk about my local community. My neighbourhood is in a quiet suburb with good facilities like parks and shops. We have skilled artisans who make traditional handicrafts. In short, I love my friendly neighbours and our local speciality.",
+      B1: "To begin with, I'd like to share my thoughts on my local community. My hometown is well known for traditional handicrafts and local specialities passed down through generations. Moreover, community helpers like garbage collectors and firefighters work hard to keep our area clean and safe. As a result, we should all help preserve our community.",
+      B2: "Have you ever wondered what makes a local community truly special? From my perspective, it is the harmony between modern facilities and deep-rooted craft traditions. For instance, skilled artisans hand down pottery and conical hat techniques while neighbours support one another daily. All in all, preserving local specialities strengthens our cultural identity."
+    },
+    sampleVi: "Giới thiệu cộng đồng địa phương, làng nghề thủ công, đặc sản, tiện ích khu dân cư và những người phục vụ cộng đồng.",
+    vocab: [
+      { w: "community", ipa: "/kəˈmjuːnəti/", pos: "n", vi: "cộng đồng", lvl: "A1", ex: "Everyone in our local community is very helpful." },
+      { w: "neighbour", ipa: "/ˈneɪbə(r)/", pos: "n", vi: "hàng xóm", lvl: "A1", ex: "We get on well with our new neighbours." },
+      { w: "suburb", ipa: "/ˈsʌbɜːb/", pos: "n", vi: "vùng ngoại ô", lvl: "A2", ex: "Mi moved to a quiet house in a suburb." },
+      { w: "facilities", ipa: "/fəˈsɪlətiz/", pos: "n", vi: "cơ sở vật chất, tiện ích", lvl: "A2", ex: "Our neighbourhood has sports facilities and parks." },
+      { w: "artisan", ipa: "/ˌɑːtɪˈzæn/", pos: "n", vi: "nghệ nhân", lvl: "B1", ex: "Skilled artisans make beautiful pottery vases." },
+      { w: "handicraft", ipa: "/ˈhændikrɑːft/", pos: "n", vi: "đồ thủ công mỹ nghệ", lvl: "B1", ex: "Tourists buy traditional handicrafts as souvenirs." },
+      { w: "speciality", ipa: "/ˌspeʃiˈæləti/", pos: "n", vi: "đặc sản", lvl: "B1", ex: "Com Lang Vong is a famous autumn speciality." },
+      { w: "preserve", ipa: "/prɪˈzɜːv/", pos: "v", vi: "bảo tồn, gìn giữ", lvl: "B1", ex: "Villagers preserve their original weaving techniques." },
+      { w: "fragrance", ipa: "/ˈfreɪɡrəns/", pos: "n", vi: "hương thơm", lvl: "B2", ex: "They wrap com in lotus leaves to keep its fragrance." },
+      { w: "hand down", ipa: "/hænd daʊn/", pos: "phr.v", vi: "truyền lại cho thế hệ sau", lvl: "B2", ex: "Grandparents hand down craft skills to their children." }
+    ],
+    qa: [
+      { lvl: "A1", q: "Where do you live?", a: "I live in a quiet neighbourhood with my family.", kw: ["live", "neighbourhood", "family"] },
+      { lvl: "A2", q: "What is a famous speciality in your hometown?", a: "My hometown is famous for traditional handicrafts and delicious local food.", kw: ["famous", "speciality", "handicrafts", "local"] },
+      { lvl: "B1", q: "Who is your favourite community helper and why?", a: "I admire garbage collectors because they take care of our streets and keep the community clean.", kw: ["community", "clean", "take care", "streets"] },
+      { lvl: "B2", q: "How can young people preserve traditional craft villages today?", a: "Young people can promote handicrafts online and learn original techniques handed down by skilled artisans.", kw: ["preserve", "artisans", "handicrafts", "techniques"] }
+    ],
+    dialogue: {
+      title: "Seeking help in a new neighbourhood",
+      lines: [
+        { sp: "A", text: "Excuse me, could you show me how to get to the craft village, please?", vi: "Xin lỗi, bạn có thể chỉ tôi đường đến làng nghề thủ công được không?" },
+        { sp: "B", text: "Sure! Go straight ahead and turn left at the local park.", vi: "Chắc chắn rồi! Đi thẳng rồi rẽ trái ở công viên địa phương." },
+        { sp: "A", text: "Thank you. Do you know where to buy traditional pottery there?", vi: "Cảm ơn bạn. Bạn có biết chỗ nào mua gốm truyền thống ở đó không?" },
+        { sp: "B", text: "Yes, you should visit the old artisan workshop near the community hall.", vi: "Có, bạn nên ghé xưởng nghệ nhân lâu đời gần nhà văn hóa cộng đồng." },
+        { sp: "A", text: "Do you mind telling me what speciality I should try?", vi: "Bạn có phiền cho tôi biết tôi nên thử đặc sản gì không?" },
+        { sp: "B", text: "Not at all! You must try the local rice cakes—they have an amazing fragrance.", vi: "Không hề! Bạn nhất định phải thử bánh địa phương—chúng có hương thơm tuyệt vời." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "My neighbourhood has + [facilities].", ex: "My neighbourhood has a big park and a library.", vi: "Khu phố tôi có..." },
+      { lvl: "A2", pat: "I don't know + [wh-word] + to-V.", ex: "I don't know where to buy traditional handicrafts.", vi: "Tôi không biết nên... ở đâu/làm gì." },
+      { lvl: "B1", pat: "Do you mind + V-ing / Could you show me how to...?", ex: "Could you show me how to sort rubbish properly?", vi: "Nhờ giúp đỡ lịch sự (Everyday English)." },
+      { lvl: "B2", pat: "Artisans pass down / hand down ... in order to preserve ...", ex: "Local artisans hand down original skills to preserve their cultural heritage.", vi: "Truyền lại kỹ năng nhằm bảo tồn..." }
+    ]
+  },
+  {
+    id: 2,
+    title: "Unit 2: City Life",
+    vi: "Cuộc sống đô thị",
+    grammar: "Double comparatives & Phrasal verbs (2)",
+    everyday: "Offering help & responding",
+    topicPrompt: "discuss the advantages, traffic problems, and green solutions in a modern city",
+    keywords: ["bustling", "traffic", "metro", "amenities", "liveable", "congestion", "pollution", "downtown"],
+    samples: {
+      A1: "City life is busy and fun. There are big malls and parks. I go to school by bus. Sometimes the road has many cars.",
+      A2: "Hello everyone! Today I want to talk about city life. Big cities are bustling and convenient with great public amenities. However, there is heavy traffic congestion and air pollution at rush hour. In short, using the metro makes city life more liveable.",
+      B1: "To begin with, city life offers modern hospitals, schools, and entertainment centres downtown. However, the more crowded a city gets, the more congested and dusty the streets become. Therefore, authorities should carry out plans to improve public transport and cut down on private cars.",
+      B2: "Have you ever wondered why big cities feel both exciting and stressful? From my perspective, bustling downtown areas offer unmatched public amenities, yet rapid urbanization turns neighbourhoods into noisy concrete jungles. All in all, expanding the metro and creating teen-friendly green spaces will make cities truly liveable."
+    },
+    sampleVi: "Nói về ưu điểm, nhược điểm của đô thị (kẹt xe, ô nhiễm, rừng bê tông) và giải pháp giao thông công cộng.",
+    vocab: [
+      { w: "downtown", ipa: "/ˌdaʊnˈtaʊn/", pos: "n/adv", vi: "trung tâm thành phố", lvl: "A1", ex: "There is a grand shopping mall downtown." },
+      { w: "metro", ipa: "/ˈmetrəʊ/", pos: "n", vi: "tàu điện ngầm", lvl: "A1", ex: "I prefer getting around by metro." },
+      { w: "bustling", ipa: "/ˈbʌslɪŋ/", pos: "adj", vi: "nhộn nhịp, hối hả", lvl: "A2", ex: "Ho Chi Minh City is a bustling city." },
+      { w: "liveable", ipa: "/ˈlɪvəbl/", pos: "adj", vi: "đáng sống", lvl: "A2", ex: "Parks make a city more liveable." },
+      { w: "traffic congestion", ipa: "/ˈtræfɪk kənˈdʒestʃən/", pos: "n", vi: "ùn tắc giao thông", lvl: "B1", ex: "Traffic congestion happens at rush hour." },
+      { w: "public amenities", ipa: "/ˈpʌblɪk əˈmiːnətiz/", pos: "n", vi: "tiện ích công cộng", lvl: "B1", ex: "Libraries and parks are useful public amenities." },
+      { w: "concrete jungle", ipa: "/ˌkɒŋkriːt ˈdʒʌŋɡl/", pos: "n", vi: "rừng bê tông", lvl: "B1", ex: "Too many tall buildings create a concrete jungle." },
+      { w: "construction site", ipa: "/kənˈstrʌkʃn saɪt/", pos: "n", vi: "công trường xây dựng", lvl: "B1", ex: "The construction site is dusty and noisy." },
+      { w: "come down with", ipa: "/kʌm daʊn wɪð/", pos: "phr.v", vi: "bị mắc (bệnh nhẹ)", lvl: "B2", ex: "Many people come down with the flu in winter." },
+      { w: "carry out", ipa: "/ˈkæri aʊt/", pos: "phr.v", vi: "tiến hành, thực hiện", lvl: "B2", ex: "The council is carrying out a green transport project." }
+    ],
+    qa: [
+      { lvl: "A1", q: "How do you get around your town or city?", a: "I usually get around by bike or bus.", kw: ["get around", "bike", "bus"] },
+      { lvl: "A2", q: "What do you like about living in a big city?", a: "I like big cities because they are convenient with nice parks and shopping malls.", kw: ["convenient", "parks", "malls", "city"] },
+      { lvl: "B1", q: "What is the biggest traffic problem in cities today?", a: "Traffic congestion at rush hour causes air pollution and makes commuters stressed.", kw: ["traffic", "congestion", "pollution", "rush hour"] },
+      { lvl: "B2", q: "How can cities become greener and more teen-friendly?", a: "Authorities can cut down on private cars, expand the metro, and design lively public amenities for teens.", kw: ["cut down", "metro", "amenities", "liveable"] }
+    ],
+    dialogue: {
+      title: "Offering help & talking about city transport",
+      lines: [
+        { sp: "A", text: "Sorry I'm late! I got stuck in a terrible traffic jam downtown.", vi: "Xin lỗi tôi đến trễ! Tôi bị kẹt xe kinh khủng ở trung tâm." },
+        { sp: "B", text: "No problem. The more crowded the city gets, the worse traffic congestion becomes.", vi: "Không sao đâu. Thành phố càng đông, kẹt xe càng tệ hơn." },
+        { sp: "A", text: "True, and the bus was packed with people today.", vi: "Đúng vậy, hôm nay xe buýt lại chật cứng người." },
+        { sp: "B", text: "Would you like me to show you how to use the new metro app?", vi: "Bạn có muốn mình chỉ cách dùng ứng dụng tàu điện mới không?" },
+        { sp: "A", text: "Thank you! That's so kind of you. Is the metro reliable?", vi: "Cảm ơn bạn! Bạn thật tốt bụng. Tàu điện có đáng tin cậy không?" },
+        { sp: "B", text: "Yes, it is always on time and helps cut down on air pollution too.", vi: "Có, nó luôn đúng giờ và còn giúp giảm ô nhiễm không khí nữa." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "I get around by + [transport].", ex: "I get around by underground because it is fast.", vi: "Tôi di chuyển bằng..." },
+      { lvl: "A2", pat: "Would you like me to + V / I can + V + if you like.", ex: "Would you like me to give you a ride home?", vi: "Đề nghị giúp đỡ (Everyday English)." },
+      { lvl: "B1", pat: "The + comparative ..., the + comparative ...", ex: "The more crowded the city is, the more polluted it becomes.", vi: "So sánh kép: Càng... càng..." },
+      { lvl: "B2", pat: "To make the city more liveable, authorities should carry out ... and cut down on ...", ex: "Authorities should carry out green projects and cut down on noise pollution.", vi: "Đề xuất giải pháp đô thị." }
+    ]
+  },
+  {
+    id: 3,
+    title: "Unit 3: Healthy Living for Teens",
+    vi: "Sống khỏe cho tuổi vị thành niên",
+    grammar: "Modal verbs in 1st conditional",
+    everyday: "Asking for repetition",
+    topicPrompt: "give practical advice on physical health, mental health, and time management for teenagers",
+    keywords: ["balanced", "physical", "mental", "priority", "deadline", "optimistic", "distractions", "exercise"],
+    samples: {
+      A1: "Teens need good health. We should eat fruit and sleep eight hours. We should do exercise every day. Good sleep makes us happy.",
+      A2: "Hello everyone! Today I will talk about healthy living for teens. First, we should eat a balanced diet and do physical exercise regularly. Second, we must sleep at least eight hours a day to stay alert. In short, both physical and mental health are important.",
+      B1: "To begin with, teenagers need a well-balanced life to reduce stress before exams. If you want to manage your time effectively, you should plan a clear schedule and give priority to urgent tasks. Moreover, avoiding phone distractions helps you meet every deadline easily.",
+      B2: "Have you ever felt stressed out before an important due date? From my perspective, maintaining mental well-being is just as vital as physical fitness. If students build an optimistic mindset, take breaks appropriately, and avoid delaying schoolwork, they can accomplish their goals without anxiety."
+    },
+    sampleVi: "Lời khuyên về chế độ ăn cân bằng, tập thể dục, ngủ đủ giấc, quản lý thời gian và giữ tinh thần lạc quan.",
+    vocab: [
+      { w: "physical", ipa: "/ˈfɪzɪkl/", pos: "adj", vi: "thuộc về thể chất", lvl: "A1", ex: "Regular exercise improves physical health." },
+      { w: "mental", ipa: "/ˈmentl/", pos: "adj", vi: "thuộc về tinh thần", lvl: "A1", ex: "Taking breaks is good for mental health." },
+      { w: "well-balanced", ipa: "/ˌwel ˈbælənst/", pos: "adj", vi: "cân bằng hợp lý", lvl: "A2", ex: "Students should keep a well-balanced life." },
+      { w: "counsellor", ipa: "/ˈkaʊnsələ(r)/", pos: "n", vi: "cố vấn học đường", lvl: "A2", ex: "The school counsellor listens to our problems." },
+      { w: "priority", ipa: "/praɪˈɒrəti/", pos: "n", vi: "sự ưu tiên", lvl: "B1", ex: "Give priority to your most important tasks." },
+      { w: "due date", ipa: "/ˈdjuː deɪt/", pos: "n", vi: "hạn chót nộp bài", lvl: "B1", ex: "I finished my essay ahead of the due date." },
+      { w: "optimistic", ipa: "/ˌɒptɪˈmɪstɪk/", pos: "adj", vi: "lạc quan", lvl: "B1", ex: "Stay optimistic when facing difficulties." },
+      { w: "distractions", ipa: "/dɪˈstrækʃnz/", pos: "n", vi: "những thứ gây xao nhãng", lvl: "B1", ex: "Turn off notifications to avoid distractions." },
+      { w: "accomplish", ipa: "/əˈkʌmplɪʃ/", pos: "v", vi: "hoàn thành, đạt được", lvl: "B2", ex: "A daily routine helps you accomplish your goals." },
+      { w: "anxiety", ipa: "/æŋˈzaɪəti/", pos: "n", vi: "sự lo âu, căng thẳng", lvl: "B2", ex: "Preparing early reduces exam anxiety." }
+    ],
+    qa: [
+      { lvl: "A1", q: "How many hours should teens sleep every night?", a: "Teens should sleep at least eight hours every night.", kw: ["sleep", "eight", "hours"] },
+      { lvl: "A2", q: "What do you do to keep good physical health?", a: "I eat a healthy diet with vegetables and do physical exercise regularly.", kw: ["healthy", "diet", "physical", "exercise"] },
+      { lvl: "B1", q: "How can students manage their time effectively?", a: "If you want to manage time well, you should use a calendar and give priority to urgent homework.", kw: ["manage", "calendar", "priority", "should"] },
+      { lvl: "B2", q: "How do you overcome stress and anxiety before exams?", a: "I avoid delaying revision, turn off social media distractions, and stay optimistic.", kw: ["delay", "distractions", "optimistic", "anxiety"] }
+    ],
+    dialogue: {
+      title: "Advice from a School Counsellor",
+      lines: [
+        { sp: "A", text: "Good morning! I feel really stressed out because my exam is next week.", vi: "Chào cô! Em thấy rất căng thẳng vì tuần sau đã thi rồi." },
+        { sp: "B", text: "I understand. If you plan a weekly schedule, you can reduce exam anxiety.", vi: "Cô hiểu. Nếu em lập thời gian biểu tuần, em có thể giảm lo âu thi cử." },
+        { sp: "A", text: "Sorry? Could you repeat that tip, please?", vi: "Xin lỗi cô? Cô có thể nhắc lại mẹo đó được không ạ?" },
+        { sp: "B", text: "Sure. You should give priority to difficult subjects and avoid phone distractions.", vi: "Được chứ. Em nên ưu tiên các môn khó và tránh xao nhãng từ điện thoại." },
+        { sp: "A", text: "What about my physical health during exam season?", vi: "Còn sức khỏe thể chất trong mùa thi thì sao ạ?" },
+        { sp: "B", text: "You must get eight hours of sleep and take short breaks to stay optimistic!", vi: "Em phải ngủ đủ 8 tiếng và nghỉ ngắn hợp lý để luôn lạc quan nhé!" }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "You should + V (eat well / sleep enough).", ex: "You should eat fruit and drink enough water.", vi: "Đưa ra lời khuyên cơ bản." },
+      { lvl: "A2", pat: "Sorry? / I beg your pardon?", ex: "I beg your pardon? Could you say that again?", vi: "Đề nghị nhắc lại lịch sự (Everyday English)." },
+      { lvl: "B1", pat: "If + S + V(present), S + should/can/must/might + V.", ex: "If you stay up too late, you might feel tired tomorrow.", vi: "Câu điều kiện loại 1 với động từ khuyết thiếu." },
+      { lvl: "B2", pat: "In order to reduce anxiety, students must get rid of ... and give priority to ...", ex: "In order to reduce anxiety, students must avoid distractions and give priority to key tasks.", vi: "Cấu trúc mục đích và lời khuyên nâng cao." }
+    ]
+  },
+  {
+    id: 4,
+    title: "Unit 4: Remembering the Past",
+    vi: "Ghi nhớ quá khứ",
+    grammar: "Past continuous & Wish + past simple",
+    everyday: "Thanking & responding",
+    topicPrompt: "describe a historical heritage site, old school days, or a traditional Vietnamese dish",
+    keywords: ["heritage", "ancient", "monument", "tradition", "generation", "magnificent", "cuisine", "preserve"],
+    samples: {
+      A1: "Viet Nam has many old temples. Banh chung is a traditional dish. We eat it at Tet. I love Vietnamese history and food.",
+      A2: "Hello everyone! Today I want to talk about remembering the past. Viet Nam has magnificent ancient temples and cultural heritage. For example, Dinh Bang Communal House is about 300 years old. In short, we must preserve our traditions for future generations.",
+      B1: "To begin with, remembering the past helps us appreciate our deep-rooted traditions. Traditional dishes like banh chung or pho connect us to our ancestors. Moreover, when our grandparents were studying in the past, they walked barefoot and played folk games. I wish I could experience their peaceful school days once!",
+      B2: "Have you ever wondered why preserving historical monuments and traditional cuisine matters so much? From my perspective, well-preserved relics and festivals act as a bridge across generations. Although modern life moves quickly, safeguarding our cultural heritage keeps our national identity alive."
+    },
+    sampleVi: "Giới thiệu di sản lịch sử, món ăn truyền thống Việt Nam (bánh chưng, phở), kỷ niệm trường xưa và bảo tồn truyền thống.",
+    vocab: [
+      { w: "ancient", ipa: "/ˈeɪnʃənt/", pos: "adj", vi: "cổ xưa", lvl: "A1", ex: "Hoi An Ancient Town is very famous." },
+      { w: "tradition", ipa: "/trəˈdɪʃn/", pos: "n", vi: "truyền thống", lvl: "A1", ex: "Families keep customs and traditions alive." },
+      { w: "heritage", ipa: "/ˈherɪtɪdʒ/", pos: "n", vi: "di sản", lvl: "A2", ex: "Angkor Wat is a World Heritage Site." },
+      { w: "monument", ipa: "/ˈmɒnjumənt/", pos: "n", vi: "tượng đài, di tích", lvl: "A2", ex: "People built the monument to honour heroes." },
+      { w: "magnificent", ipa: "/mæɡˈnɪfɪsnt/", pos: "adj", vi: "tráng lệ, nguy nga", lvl: "B1", ex: "The communal house looks magnificent." },
+      { w: "generation", ipa: "/ˌdʒenəˈreɪʃn/", pos: "n", vi: "thế hệ", lvl: "B1", ex: "We protect relics for future generations." },
+      { w: "cuisine", ipa: "/kwɪˈziːn/", pos: "n", vi: "ẩm thực", lvl: "B1", ex: "Vietnamese cuisine is healthy and colourful." },
+      { w: "well preserved", ipa: "/ˌwel prɪˈzɜːvd/", pos: "adj", vi: "được bảo tồn tốt", lvl: "B1", ex: "This historic castle is well preserved." },
+      { w: "deep-rooted", ipa: "/ˌdiːp ˈruːtɪd/", pos: "adj", vi: "lâu đời, ăn sâu vào gốc rễ", lvl: "B2", ex: "Worshipping ancestors is a deep-rooted custom." },
+      { w: "barefoot", ipa: "/ˈbeəfʊt/", pos: "adv/adj", vi: "chân trần", lvl: "B2", ex: "In the past, some students walked barefoot to school." }
+    ],
+    qa: [
+      { lvl: "A1", q: "What is your favourite traditional Vietnamese dish?", a: "My favourite traditional dish is pho because it is delicious.", kw: ["traditional", "dish", "pho", "delicious"] },
+      { lvl: "A2", q: "When do Vietnamese families eat banh chung?", a: "We eat banh chung at Tet and on the Hung Kings' anniversary.", kw: ["banh chung", "Tet", "anniversary"] },
+      { lvl: "B1", q: "What were school days like in your grandparents' time?", a: "Students had lessons in the morning only and played traditional games during break time.", kw: ["lessons", "morning", "traditional", "games"] },
+      { lvl: "B2", q: "Why should young people preserve national cultural heritage?", a: "Thanks to preservation efforts, future generations can understand our history and deep-rooted values.", kw: ["preserve", "heritage", "generations", "history"] }
+    ],
+    dialogue: {
+      title: "Visiting a historic site & thanking the guide",
+      lines: [
+        { sp: "A", text: "Look at this communal house! It is so magnificent and well preserved.", vi: "Nhìn ngôi đình này xem! Thật tráng lệ và được bảo tồn rất tốt." },
+        { sp: "B", text: "Yes, artisans were building it for over thirty years in the 18th century.", vi: "Đúng vậy, các nghệ nhân đã xây nó hơn 30 năm vào thế kỷ 18." },
+        { sp: "A", text: "I wish I could travel back in time to see life back then!", vi: "Tôi ước mình có thể quay ngược thời gian để xem cuộc sống khi ấy!" },
+        { sp: "B", text: "Me too. Families here still observe traditional festivals every spring.", vi: "Tôi cũng vậy. Các gia đình ở đây vẫn giữ lễ hội truyền thống mỗi mùa xuân." },
+        { sp: "A", text: "Thank you very much for showing us around this historic monument.", vi: "Cảm ơn bạn rất nhiều vì đã dẫn chúng tôi tham quan di tích lịch sử này." },
+        { sp: "B", text: "You're welcome! Sharing our heritage helps keep it alive.", vi: "Không có gì! Chia sẻ di sản giúp giữ cho nó sống mãi." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "Thank you very much for + V-ing! — You're welcome.", ex: "Thank you very much for telling us about the past!", vi: "Cảm ơn và đáp lại (Everyday English)." },
+      { lvl: "A2", pat: "S + was/were + V-ing (when + S + V-ed).", ex: "My dad was visiting Hoi An when he met my mum.", vi: "Thì Quá khứ tiếp diễn." },
+      { lvl: "B1", pat: "S + wish(es) + S + V(past simple / could V).", ex: "I wish I had a three-month summer holiday like my grandma.", vi: "Câu ước cho hiện tại." },
+      { lvl: "B2", pat: "Thanks to preservation efforts, ... has remained a deep-rooted tradition.", ex: "Thanks to preservation efforts, our cuisine has remained a deep-rooted tradition.", vi: "Diễn đạt kết quả bảo tồn di sản." }
+    ]
+  },
+  {
+    id: 5,
+    title: "Unit 5: Our Experiences",
+    vi: "Những trải nghiệm của chúng ta",
+    grammar: "Present perfect (have/has + V3)",
+    everyday: "Apologising & responding",
+    topicPrompt: "share a memorable summer course, camping trip, or pleasant/unpleasant experience at school",
+    keywords: ["memorable", "experience", "eco-tour", "exhilarating", "snorkelling", "teamwork", "embarrassing", "unforgettable"],
+    samples: {
+      A1: "Last summer I went to Da Lat. I took many photos. I saw a gong show with my family. It was very fun and happy.",
+      A2: "Hello everyone! Today I want to talk about my most memorable experience. Last summer I went on a camping trip with my classmates. We put up tents, explored nature, and joined team building games. In short, it was an amazing and unforgettable trip.",
+      B1: "To begin with, I have never had such an exhilarating experience as my summer eco-tour in Da Lat. We rode a jeep up Langbiang Mountain and danced with locals at a gong show. Moreover, working in teams helped me grow up and feel much more confident.",
+      B2: "Have you ever stepped outside your comfort zone on a summer course? From my perspective, both thrilling adventures and embarrassing moments teach us valuable lessons. For instance, although my mind once went blank during a class presentation, joining a soft-skills camp has completely transformed my confidence."
+    },
+    sampleVi: "Kể lại trải nghiệm đáng nhớ (du lịch sinh thái, cắm trại, khóa học hè, biểu diễn văn nghệ hoặc kỷ niệm trường học).",
+    vocab: [
+      { w: "memorable", ipa: "/ˈmemərəbl/", pos: "adj", vi: "đáng nhớ", lvl: "A1", ex: "We had a memorable evening in Da Lat." },
+      { w: "experience", ipa: "/ɪkˈspɪəriəns/", pos: "n", vi: "trải nghiệm", lvl: "A1", ex: "Camping by the sea was a great experience." },
+      { w: "eco-tour", ipa: "/ˈiːkəʊ tʊə(r)/", pos: "n", vi: "du lịch sinh thái", lvl: "A2", ex: "Have you ever taken an eco-tour?" },
+      { w: "put up tents", ipa: "/pʊt ʌp tents/", pos: "phr", vi: "dựng lều", lvl: "A2", ex: "We put up tents together at the campsite." },
+      { w: "thrilling", ipa: "/ˈθrɪlɪŋ/", pos: "adj", vi: "hồi hộp, ly kỳ", lvl: "B1", ex: "Riding a jeep up the mountain was thrilling." },
+      { w: "snorkelling", ipa: "/ˈsnɔːkəlɪŋ/", pos: "n", vi: "lặn với ống thở", lvl: "B1", ex: "Going snorkelling to see coral reefs is fun." },
+      { w: "embarrassing", ipa: "/ɪmˈbærəsɪŋ/", pos: "adj", vi: "ngại ngùng, xấu hổ", lvl: "B1", ex: "Taking the wrong bag was an embarrassing moment." },
+      { w: "exhilarating", ipa: "/ɪɡˈzɪləreɪtɪŋ/", pos: "adj", vi: "phấn khích tột độ", lvl: "B2", ex: "The parachute jump was an exhilarating experience." },
+      { w: "learn by rote", ipa: "/lɜːn baɪ rəʊt/", pos: "phr", vi: "học vẹt", lvl: "B2", ex: "Don't learn by rote; try to understand the lesson." },
+      { w: "go blank", ipa: "/ɡəʊ blæŋk/", pos: "phr", vi: "đầu óc trống rỗng", lvl: "B2", ex: "My mind suddenly went blank during the test." }
+    ],
+    qa: [
+      { lvl: "A1", q: "Have you ever climbed a mountain?", a: "Yes, I have. It was exciting and fun.", kw: ["Yes", "have", "exciting"] },
+      { lvl: "A2", q: "What activities did you do on your last school trip?", a: "We put up tents, took photos, and joined team building games.", kw: ["tents", "photos", "team", "games"] },
+      { lvl: "B1", q: "What was the most pleasant experience you have had at school?", a: "Winning our English presentation contest has been my most memorable experience so far.", kw: ["winning", "memorable", "experience", "have"] },
+      { lvl: "B2", q: "Why is learning by rote an unpleasant habit for students?", a: "When you learn by rote without understanding, your mind easily goes blank under exam pressure.", kw: ["rote", "mind", "blank", "understanding"] }
+    ],
+    dialogue: {
+      title: "Apologising & sharing a camping experience",
+      lines: [
+        { sp: "A", text: "I'm really sorry I'm late for our club meeting! There was heavy rain.", vi: "Mình thật sự xin lỗi vì đến họp CLB trễ! Trời mưa to quá." },
+        { sp: "B", text: "That's okay! We were just talking about your eco-tour in Da Lat.", vi: "Không sao đâu! Bọn mình vừa nhắc đến chuyến du lịch sinh thái ở Đà Lạt của cậu." },
+        { sp: "A", text: "Oh, it was the most exhilarating trip I have ever taken!", vi: "Ồ, đó là chuyến đi phấn khích nhất mình từng tham gia!" },
+        { sp: "B", text: "Have you ever seen a gong show before that trip?", vi: "Trước chuyến đó cậu đã bao giờ xem biểu diễn cồng chiêng chưa?" },
+        { sp: "A", text: "No, I haven't. Dancing with the locals was truly unforgettable.", vi: "Chưa hề. Nhảy múa cùng người dân địa phương thật sự khó quên." },
+        { sp: "B", text: "Sounds brilliant! I hope I can tour that area next summer.", vi: "Nghe tuyệt quá! Mình hy vọng hè tới có thể khám phá nơi đó." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "I'm really sorry... / Oops, my mistake. — That's okay.", ex: "I'm really sorry I submitted my homework late.", vi: "Xin lỗi và đáp lại (Everyday English)." },
+      { lvl: "A2", pat: "Have you ever + V3/ed ...?", ex: "Have you ever gone snorkelling in the sea?", vi: "Hỏi trải nghiệm (Hiện tại hoàn thành)." },
+      { lvl: "B1", pat: "It is the most + [adj] + experience I have ever had.", ex: "It is the most thrilling experience I have ever had.", vi: "Nhấn mạnh trải nghiệm ấn tượng nhất." },
+      { lvl: "B2", pat: "Although it felt embarrassing at first, the course helped me ...", ex: "Although it felt embarrassing at first, the army course helped me grow more independent.", vi: "Chiêm nghiệm bài học từ trải nghiệm." }
+    ]
+  },
+  {
+    id: 6,
+    title: "Unit 6: Vietnamese Lifestyle: Then and Now",
+    vi: "Lối sống Việt Nam xưa và nay",
+    grammar: "Verbs + to-V & Verbs + V-ing",
+    everyday: "Making promises",
+    topicPrompt: "compare Vietnamese family life, learning styles, or leisure activities in the past and today",
+    keywords: ["lifestyle", "extended", "nuclear", "opportunity", "democratic", "pursue", "independent", "privacy"],
+    samples: {
+      A1: "Life today is very different. In the past, children played outside. Now we use smartphones and the Internet. Learning is easy now.",
+      A2: "Hello everyone! Today I want to talk about Vietnamese lifestyle then and now. In the past, many people lived in extended families and depended on textbooks. Nowadays, nuclear families are common and students enjoy using the Internet to learn. In short, life is more convenient today.",
+      B1: "To begin with, Vietnamese learning styles have changed greatly over the years. Previously, students learned simply by taking notes and memorising lessons. However, nowadays we have more opportunities to pursue our own interests and become independent learners thanks to online sources.",
+      B2: "Have you ever compared your teenage lifestyle with your grandparents' generation? From my perspective, the shift from extended to nuclear families has created more democratic parent-child relationships and personal privacy. Nevertheless, we should still promise to preserve our family-oriented values."
+    },
+    sampleVi: "So sánh lối sống, gia đình (nhiều thế hệ vs hạt nhân), cách học tập và giải trí của người Việt xưa và nay.",
+    vocab: [
+      { w: "lifestyle", ipa: "/ˈlaɪfstaɪl/", pos: "n", vi: "lối sống", lvl: "A1", ex: "Vietnamese lifestyle has changed for the better." },
+      { w: "opportunity", ipa: "/ˌɒpəˈtjuːnəti/", pos: "n", vi: "cơ hội", lvl: "A2", ex: "Teens have more opportunities to learn now." },
+      { w: "extended family", ipa: "/ɪkˈstendɪd ˈfæməli/", pos: "n", vi: "gia đình nhiều thế hệ", lvl: "A2", ex: "Four generations lived in an extended family." },
+      { w: "nuclear family", ipa: "/ˈnjuːkliə ˈfæməli/", pos: "n", vi: "gia đình hạt nhân", lvl: "A2", ex: "Nuclear families are more common today." },
+      { w: "pursue", ipa: "/pəˈsjuː/", pos: "v", vi: "theo đuổi", lvl: "B1", ex: "My parents let me pursue my own interests." },
+      { w: "memorise", ipa: "/ˈmeməraɪz/", pos: "v", vi: "ghi nhớ, học thuộc", lvl: "B1", ex: "In the past, students took notes and memorised them." },
+      { w: "replace", ipa: "/rɪˈpleɪs/", pos: "v", vi: "thay thế", lvl: "B1", ex: "Hi-tech appliances have replaced old tools." },
+      { w: "democratic", ipa: "/ˌdeməˈkrætɪk/", pos: "adj", vi: "dân chủ, bình đẳng", lvl: "B2", ex: "Parent-child relations are more democratic now." },
+      { w: "family-oriented", ipa: "/ˈfæməli ˈɔːrientɪd/", pos: "adj", vi: "hướng về gia đình", lvl: "B2", ex: "Vietnamese people are very family-oriented." },
+      { w: "privacy", ipa: "/ˈprɪvəsi/", pos: "n", vi: "sự riêng tư", lvl: "B2", ex: "Teenagers value their personal privacy." }
+    ],
+    qa: [
+      { lvl: "A1", q: "How did children play in the past?", a: "In the past, children played simple outdoor games.", kw: ["past", "played", "outdoor", "games"] },
+      { lvl: "A2", q: "How has learning changed today?", a: "Today students use the Internet and computers to learn more easily.", kw: ["Internet", "computers", "learn", "today"] },
+      { lvl: "B1", q: "What is the difference between extended and nuclear families?", a: "An extended family has three or more generations, while a nuclear family has only parents and children.", kw: ["extended", "nuclear", "generations", "parents"] },
+      { lvl: "B2", q: "Do you think modern lifestyle changes are for the better?", a: "Mostly yes, because young people enjoy more freedom of choice and democratic relationships, though we must protect family bonds.", kw: ["freedom", "democratic", "better", "family"] }
+    ],
+    dialogue: {
+      title: "Talking with Grandpa & making a promise",
+      lines: [
+        { sp: "A", text: "Grandpa, do you mind telling me how school was in your day?", vi: "Ông ơi, ông có phiền kể cho cháu nghe trường học thời ông thế nào không?" },
+        { sp: "B", text: "Not at all! We walked to school and depended mainly on textbooks.", vi: "Không hề! Ngày xưa ông đi bộ đến trường và chủ yếu học theo sách giáo khoa." },
+        { sp: "A", text: "Today we enjoy using online sources to pursue our interests.", vi: "Ngày nay tụi cháu thích dùng tài liệu trực tuyến để theo đuổi sở thích." },
+        { sp: "B", text: "That's wonderful, but avoid spending too much time on phones, okay?", vi: "Tuyệt lắm, nhưng nhớ tránh dành quá nhiều thời gian cho điện thoại nhé?" },
+        { sp: "A", text: "I promise not to play games late at night, Grandpa!", vi: "Cháu hứa sẽ không chơi game khuya đâu ông ạ!" },
+        { sp: "B", text: "Great! I appreciate it. Let's plan to visit the museum this weekend.", vi: "Tốt lắm! Ông rất vui. Cuối tuần này ông cháu mình đi bảo tàng nhé." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "I promise to / not to + V.", ex: "I promise to come home before 9 p.m.", vi: "Đưa ra lời hứa (Everyday English)." },
+      { lvl: "A2", pat: "want / decide / plan / agree + to-V.", ex: "We decided to research Vietnamese traditional games.", vi: "Động từ theo sau bởi to-infinitive." },
+      { lvl: "B1", pat: "enjoy / fancy / mind / avoid / suggest + V-ing.", ex: "I suggest visiting the Museum of Ethnology.", vi: "Động từ theo sau bởi V-ing." },
+      { lvl: "B2", pat: "While past generations depended on ..., today's youth have the freedom to pursue ...", ex: "While past generations depended on textbooks, today's youth have the freedom to pursue online learning.", vi: "So sánh đối chiếu lối sống xưa và nay." }
+    ]
+  },
+  {
+    id: 7,
+    title: "Unit 7: Natural Wonders of the World",
+    vi: "Kỳ quan thiên nhiên thế giới",
+    grammar: "Reported speech (Yes/No questions)",
+    everyday: "Asking for permission",
+    topicPrompt: "introduce a majestic natural wonder and suggest ways to protect its biodiversity",
+    keywords: ["wonder", "landscape", "majestic", "paradise", "biodiversity", "sustainable", "explore", "permit"],
+    samples: {
+      A1: "Ha Long Bay is a natural wonder in Viet Nam. It has blue water and green islands. Visitors can take a boat. We must keep it clean.",
+      A2: "Hello everyone! Today I want to talk about a natural wonder: Ha Long Bay. First, it has a majestic landscape with thousands of islands. Second, tourists can explore caves and enjoy boat rides. In short, we should protect this paradise for everyone.",
+      B1: "To begin with, the Great Barrier Reef and Ha Long Bay are charming destinations rich in biodiversity. Last week, my friend asked me if I wanted to explore the Dolomites in Italy. However, human activities threaten these ecosystems, so sustainable development is urgent.",
+      B2: "Have you ever stood in awe of a snow-covered mountain peak or a vibrant coral reef? From my perspective, natural wonders possess priceless biological diversity that deserves urgent protection. All in all, governments must enforce strict permits and promote sustainable eco-tourism before these habitats vanish."
+    },
+    sampleVi: "Giới thiệu kỳ quan thiên nhiên (Vịnh Hạ Long, Rạn san hô Great Barrier, dãy Dolomites) và bảo vệ đa dạng sinh học.",
+    vocab: [
+      { w: "landscape", ipa: "/ˈlændskeɪp/", pos: "n", vi: "phong cảnh, cảnh quan", lvl: "A1", ex: "Our country has many beautiful landscapes." },
+      { w: "explore", ipa: "/ɪkˈsplɔː(r)/", pos: "v", vi: "khám phá", lvl: "A1", ex: "We can explore Trang An by boat." },
+      { w: "peak", ipa: "/piːk/", pos: "n", vi: "đỉnh núi", lvl: "A2", ex: "Mount Everest has a snow-covered peak." },
+      { w: "paradise", ipa: "/ˈpærədaɪs/", pos: "n", vi: "thiên đường", lvl: "A2", ex: "The Dolomites are a paradise for climbers." },
+      { w: "majestic", ipa: "/məˈdʒestɪk/", pos: "adj", vi: "hùng vĩ, uy nghi", lvl: "B1", ex: "Ha Long Bay is a majestic natural wonder." },
+      { w: "permit", ipa: "/pəˈmɪt/", pos: "v/n", vi: "cho phép / giấy phép", lvl: "B1", ex: "They don't permit visitors to litter here." },
+      { w: "access", ipa: "/ˈækses/", pos: "n", vi: "lối vào, sự tiếp cận", lvl: "B1", ex: "It is easy to get access to the valley." },
+      { w: "biodiversity", ipa: "/ˌbaɪəʊdaɪˈvɜːsəti/", pos: "n", vi: "đa dạng sinh học", lvl: "B2", ex: "The Amazon rainforest is rich in biodiversity." },
+      { w: "sustainable", ipa: "/səˈsteɪnəbl/", pos: "adj", vi: "bền vững", lvl: "B2", ex: "We must support sustainable development." },
+      { w: "urgent", ipa: "/ˈɜːdʒənt/", pos: "adj", vi: "khẩn cấp", lvl: "B2", ex: "There is an urgent need to restore ecosystems." }
+    ],
+    qa: [
+      { lvl: "A1", q: "Which natural wonder do you want to visit?", a: "I want to visit Ha Long Bay in Viet Nam.", kw: ["visit", "Ha Long", "wonder"] },
+      { lvl: "A2", q: "What can tourists do at the Great Barrier Reef?", a: "Tourists can enjoy coral watching, sailing, and scuba diving.", kw: ["coral", "sailing", "diving"] },
+      { lvl: "B1", q: "What threats do natural wonders like the Amazon face?", a: "They face deforestation, fires, and the loss of biodiversity.", kw: ["deforestation", "biodiversity", "threats"] },
+      { lvl: "B2", q: "How can governments balance tourism and nature protection?", a: "They should limit visitor access with permits and invest in sustainable conservation projects.", kw: ["access", "permits", "sustainable", "protect"] }
+    ],
+    dialogue: {
+      title: "Asking for permission at a natural wonder",
+      lines: [
+        { sp: "A", text: "Excuse me, may we come inside the cave and take some photos?", vi: "Xin lỗi, chúng em có thể vào trong hang và chụp vài tấm ảnh không ạ?" },
+        { sp: "B", text: "Sure, you can take photos, but we don't permit touching the rocks.", vi: "Được chứ, các em có thể chụp ảnh, nhưng không được phép chạm vào đá." },
+        { sp: "A", text: "Got it! My teacher asked me if this park was rich in flora and fauna.", vi: "Em hiểu rồi! Cô giáo em hỏi liệu vườn quốc gia này có giàu hệ động thực vật không." },
+        { sp: "B", text: "Yes, it possesses extraordinary biodiversity with hundreds of rare species.", vi: "Có, nơi đây sở hữu đa dạng sinh học phi thường với hàng trăm loài quý hiếm." },
+        { sp: "A", text: "Can we join the boat tour to explore the lagoon this afternoon?", vi: "Chiều nay tụi em có thể tham gia tour thuyền khám phá đầm phá không ạ?" },
+        { sp: "B", text: "Certainly! Please remember not to leave any plastic waste behind.", vi: "Chắc chắn rồi! Nhớ đừng để lại rác thải nhựa nhé." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "Can I / May we + V ...? — Sure / No, you can't.", ex: "May we have a look around the national park?", vi: "Xin phép và đáp lại (Everyday English)." },
+      { lvl: "A2", pat: "It is located in ... and famous for ...", ex: "Jeju Island is located in South Korea and famous for its volcano.", vi: "Giới thiệu vị trí & đặc điểm kỳ quan." },
+      { lvl: "B1", pat: "S + asked / wanted to know + if / whether + S + V(lùi thì).", ex: "Tom asked me if I wanted to visit the Grand Canyon.", vi: "Câu hỏi tường thuật Yes/No." },
+      { lvl: "B2", pat: "There is an urgent need to ... to ensure sustainable development.", ex: "There is an urgent need to protect wildlife habitats to ensure sustainable development.", vi: "Nhấn mạnh tính cấp bách bảo vệ thiên nhiên." }
+    ]
+  },
+  {
+    id: 8,
+    title: "Unit 8: Tourism",
+    vi: "Du lịch",
+    grammar: "Relative pronouns (who, which, whose)",
+    everyday: "Expressing obligation",
+    topicPrompt: "compare package holidays with self-guided tours or present a smooth travel itinerary",
+    keywords: ["tourism", "itinerary", "domestic", "homestay", "package", "self-guided", "destination", "smooth"],
+    samples: {
+      A1: "I love travelling with my family. Last year we went to Da Nang. We stayed in a nice hotel and ate local food. It was great.",
+      A2: "Hello everyone! Today I want to talk about tourism. Last summer I went on a domestic holiday to Da Nang, which is an ideal destination for food tourism. We stayed in a cosy homestay and had a smooth trip. In short, travelling helps us relax and learn.",
+      B1: "To begin with, travellers today often choose between package holidays and self-guided tours. A package tour saves time because a travel agency arranges everything, though you must follow a fixed itinerary. On the other hand, young people who use travel apps prefer self-guided tours because they are cheaper and more flexible.",
+      B2: "Have you ever planned a self-guided trip entirely on your own? From my perspective, while package tours offer stress-free protection for elderly holidaymakers, self-guided itineraries empower young travellers whose goal is authentic local immersion. All in all, careful budgeting and smart travel apps guarantee a smooth journey."
+    },
+    sampleVi: "So sánh tour trọn gói (package tour) và du lịch tự túc (self-guided tour), lịch trình du lịch và ẩm thực địa phương.",
+    vocab: [
+      { w: "destination", ipa: "/ˌdestɪˈneɪʃn/", pos: "n", vi: "điểm đến", lvl: "A1", ex: "Bali is an ideal destination for beach lovers." },
+      { w: "homestay", ipa: "/ˈhəʊmsteɪ/", pos: "n", vi: "nhà nghỉ tại nhà dân", lvl: "A1", ex: "We rented a cosy homestay by the sea." },
+      { w: "domestic", ipa: "/dəˈmestɪk/", pos: "adj", vi: "nội địa, trong nước", lvl: "A2", ex: "We took a domestic flight to Phu Quoc." },
+      { w: "package holiday", ipa: "/ˈpækɪdʒ ˈhɒlədeɪ/", pos: "n", vi: "kỳ nghỉ trọn gói", lvl: "A2", ex: "A travel agency organises a package holiday." },
+      { w: "self-guided tour", ipa: "/ˌself ˈɡaɪdɪd tʊə(r)/", pos: "n", vi: "chuyến đi tự túc", lvl: "B1", ex: "Self-guided tours are flexible and cheaper." },
+      { w: "itinerary", ipa: "/aɪˈtɪnərəri/", pos: "n", vi: "lịch trình chuyến đi", lvl: "B1", ex: "Lan sent us the itinerary for her Sa Pa trip." },
+      { w: "smooth", ipa: "/smuːð/", pos: "adj", vi: "suôn sẻ, êm đẹp", lvl: "B1", ex: "Good planning ensures a smooth trip." },
+      { w: "travel agency", ipa: "/ˈtrævl ˈeɪdʒənsi/", pos: "n", vi: "công ty lữ hành", lvl: "B1", ex: "The travel agency booked our entrance tickets." },
+      { w: "ruinous", ipa: "/ˈruːɪnəs/", pos: "adj", vi: "đổ nát, tàn tích", lvl: "B2", ex: "Tourists visited the ruinous palace in Hue." },
+      { w: "hunt for", ipa: "/hʌnt fɔː(r)/", pos: "phr.v", vi: "săn tìm (vé rẻ, phòng)", lvl: "B2", ex: "Young travellers hunt for cheap air tickets online." }
+    ],
+    qa: [
+      { lvl: "A1", q: "Where did you go on your last holiday?", a: "I went to Da Nang with my family and swam in the sea.", kw: ["went", "family", "sea"] },
+      { lvl: "A2", q: "What types of tourism do you know?", a: "I know food tourism, shopping tourism, and eco-tourism.", kw: ["food", "tourism", "eco-tourism"] },
+      { lvl: "B1", q: "What is an advantage of a self-guided tour?", a: "It is cheaper and more flexible because you can choose your own itinerary.", kw: ["cheaper", "flexible", "itinerary"] },
+      { lvl: "B2", q: "What skills do travellers need for a smooth self-guided holiday?", a: "They should be good at using travel apps, estimating budgets, and hunting for reliable accommodation.", kw: ["apps", "budget", "accommodation", "smooth"] }
+    ],
+    dialogue: {
+      title: "Planning a trip & expressing obligation",
+      lines: [
+        { sp: "A", text: "We're leaving for Hue tomorrow! Have you checked the trip itinerary?", vi: "Ngày mai tụi mình đi Huế rồi! Cậu xem lịch trình chuyến đi chưa?" },
+        { sp: "B", text: "Yes! We are visiting Thien Mu Pagoda, which was built in 1602.", vi: "Rồi! Tụi mình sẽ thăm chùa Thiên Mụ, ngôi chùa xây năm 1602." },
+        { sp: "A", text: "Is it necessary for us to buy entrance tickets in advance?", vi: "Chúng ta có cần mua vé vào cổng trước không?" },
+        { sp: "B", text: "Yes, it is. And you must pack light clothes and bring your student card.", vi: "Có chứ. Và cậu phải xếp đồ nhẹ nhàng cùng thẻ học sinh nữa." },
+        { sp: "A", text: "What about lunch? Are we trying local food tourism?", vi: "Còn bữa trưa thì sao? Tụi mình sẽ trải nghiệm du lịch ẩm thực chứ?" },
+        { sp: "B", text: "Definitely! We'll eat at Dong Ba Market, whose local dishes are famous.", vi: "Chắc chắn rồi! Tụi mình sẽ ăn ở chợ Đông Ba, nơi có các món địa phương nổi tiếng." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "You must + V / Is it necessary to + V?", ex: "You must hurry up or we'll miss the train.", vi: "Diễn đạt sự bắt buộc (Everyday English)." },
+      { lvl: "A2", pat: "Noun + who / which + V ...", ex: "Food tourism is for tourists who love local dishes.", vi: "Đại từ quan hệ who / which." },
+      { lvl: "B1", pat: "Noun + whose + Noun + V ...", ex: "Ha Giang, whose beauty is appealing, is a must-go destination.", vi: "Đại từ quan hệ sở hữu whose." },
+      { lvl: "B2", pat: "While package tours save ..., self-guided tours offer greater flexibility for travellers who ...", ex: "While package tours save time, self-guided tours offer flexibility for travellers who master online apps.", vi: "Cấu trúc so sánh hai loại hình du lịch." }
+    ]
+  },
+  {
+    id: 9,
+    title: "Unit 9: World Englishes",
+    vi: "Tiếng Anh trên thế giới",
+    grammar: "Defining relative clauses",
+    everyday: "Saying good luck & responding",
+    topicPrompt: "explain the global role of English, varieties of English, and effective ways to improve speaking",
+    keywords: ["global", "variety", "bilingual", "fluent", "vocabulary", "pronunciation", "translate", "concentric"],
+    samples: {
+      A1: "English is a global language. Many people speak English. I read English books and learn new words every day. Good luck!",
+      A2: "Hello everyone! Today I want to talk about World Englishes. English is a global language which people use around the world. To become fluent, I read books, look up new words in a dictionary, and practice pronunciation daily. In short, English opens many doors.",
+      B1: "To begin with, Professor Kachru proposed a model with three concentric circles of English: the Inner, Outer, and Expanding Circles. Viet Nam belongs to the Expanding Circle where English is a foreign language. Moreover, copying new words into a notebook and going over them regularly helps us communicate confidently.",
+      B2: "Have you ever noticed how British and American English differ in vocabulary, like 'flat' and 'apartment'? From my perspective, World Englishes reflect rich cultural diversity, even borrowing words like 'banh mi' and 'sushi'. All in all, combining active listening with daily pair speaking is the most reliable path to becoming bilingual."
+    },
+    sampleVi: "Mô hình 3 vòng tròn tiếng Anh đồng tâm (Kachru), sự đa dạng Anh-Anh/Anh-Mỹ, từ mượn và bí quyết học tiếng Anh hiệu quả.",
+    vocab: [
+      { w: "vocabulary", ipa: "/vəˈkæbjələri/", pos: "n", vi: "từ vựng", lvl: "A1", ex: "Reading books helps expand my vocabulary." },
+      { w: "fluent", ipa: "/ˈfluːənt/", pos: "adj", vi: "trôi chảy, lưu loát", lvl: "A2", ex: "She is fluent in both English and French." },
+      { w: "bilingual", ipa: "/ˌbaɪˈlɪŋɡwəl/", pos: "adj", vi: "song ngữ", lvl: "A2", ex: "He is bilingual in Vietnamese and English." },
+      { w: "translate", ipa: "/trænzˈleɪt/", pos: "v", vi: "dịch thuật", lvl: "A2", ex: "She translated the short story into English." },
+      { w: "variety", ipa: "/vəˈraɪəti/", pos: "n", vi: "biến thể, sự đa dạng", lvl: "B1", ex: "English has many varieties worldwide." },
+      { w: "official language", ipa: "/əˈfɪʃl ˈlæŋɡwɪdʒ/", pos: "n", vi: "ngôn ngữ chính thức", lvl: "B1", ex: "English is an official language in Singapore." },
+      { w: "look up", ipa: "/lʊk ʌp/", pos: "phr.v", vi: "tra cứu (từ điển)", lvl: "B1", ex: "Look up new words in an English dictionary." },
+      { w: "pick up", ipa: "/pɪk ʌp/", pos: "phr.v", vi: "học lỏm, tiếp thu tự nhiên", lvl: "B1", ex: "She picked up English while living abroad." },
+      { w: "concentric", ipa: "/kənˈsentrɪk/", pos: "adj", vi: "đồng tâm", lvl: "B2", ex: "Kachru's model has three concentric circles." },
+      { w: "immigrant", ipa: "/ˈɪmɪɡrənt/", pos: "n", vi: "người nhập cư", lvl: "B2", ex: "Immigrants bring borrowed words into English." }
+    ],
+    qa: [
+      { lvl: "A1", q: "Why do you learn English?", a: "I learn English to communicate with friends around the world.", kw: ["learn", "English", "communicate", "world"] },
+      { lvl: "A2", q: "What is one difference between British and American English?", a: "British people say 'flat' and 'holiday', while Americans say 'apartment' and 'vacation'.", kw: ["British", "American", "apartment", "holiday"] },
+      { lvl: "B1", q: "What have you done to improve your English vocabulary?", a: "I read English stories, look up words in a dictionary, and go over my notebook every week.", kw: ["read", "look up", "dictionary", "notebook"] },
+      { lvl: "B2", q: "Can you explain Kachru's three concentric circles of English?", a: "The Inner Circle uses English as a first language, the Outer Circle as an official language, and the Expanding Circle as a foreign language.", kw: ["Inner", "Outer", "Expanding", "official"] }
+    ],
+    dialogue: {
+      title: "Saying good luck & discussing World Englishes",
+      lines: [
+        { sp: "A", text: "Hi! I heard you are joining the English speaking contest tomorrow. Good luck!", vi: "Chào cậu! Nghe nói mai cậu thi nói Tiếng Anh. Chúc may mắn nhé!" },
+        { sp: "B", text: "Thanks so much! I'll try my best. I'm presenting about borrowed words.", vi: "Cảm ơn nhiều! Mình sẽ cố hết sức. Mình thuyết trình về từ mượn." },
+        { sp: "A", text: "Cool! Like 'banh mi' from Vietnamese and 'sushi' from Japanese?", vi: "Hay quá! Như 'banh mi' từ tiếng Việt và 'sushi' từ tiếng Nhật ấy hả?" },
+        { sp: "B", text: "Exactly! English is the language which borrows words from many cultures.", vi: "Chính xác! Tiếng Anh là ngôn ngữ vay mượn từ vựng từ rất nhiều nền văn hóa." },
+        { sp: "A", text: "How do you practice to speak so fluently?", vi: "Cậu luyện thế nào mà nói trôi chảy thế?" },
+        { sp: "B", text: "I shadow native audio every day and go over new vocabulary regularly. Wish me luck!", vi: "Mình nhại giọng âm thanh bản xứ mỗi ngày và ôn từ vựng đều đặn. Chúc mình may mắn nhé!" }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "Good luck with ...! / I wish you all the best of luck!", ex: "Good luck with your English presentation!", vi: "Chúc may mắn (Everyday English)." },
+      { lvl: "A2", pat: "S + look up / copy into / go over + [new words].", ex: "Remember to go over the vocabulary you learnt in class.", vi: "Cụm động từ học ngoại ngữ." },
+      { lvl: "B1", pat: "The person who / The language which ... (Defining relative clause)", ex: "People who speak English well can find international jobs easily.", vi: "Mệnh đề quan hệ xác định." },
+      { lvl: "B2", pat: "In Kachru's model, countries in the ... Circle use English as a(n) ...", ex: "In Kachru's model, countries in the Expanding Circle use English as a foreign language.", vi: "Diễn giải học thuật về World Englishes." }
+    ]
+  },
+  {
+    id: 10,
+    title: "Unit 10: Planet Earth",
+    vi: "Hành tinh Trái Đất",
+    grammar: "Non-defining relative clauses",
+    everyday: "Persuading someone",
+    topicPrompt: "explain threats to habitats, flora and fauna, and persuade students to take green actions",
+    keywords: ["planet", "habitat", "climate", "wildlife", "ecological", "recycle", "flora", "reserve"],
+    samples: {
+      A1: "Planet Earth is our home. It has oceans, forests, and animals. We should plant trees and recycle plastic. Let's save Earth!",
+      A2: "Hello everyone! Today I want to talk about Planet Earth. Earth, which is the third planet from the Sun, has diverse habitats for flora and fauna. However, climate change and pollution hurt wildlife. In short, we should recycle waste and plant more trees.",
+      B1: "To begin with, Planet Earth provides liquid water and rich ecosystems that support millions of species. Unfortunately, deforestation and global warming are destroying natural habitats and threatening the food chain. Therefore, why don't we protect nature reserves and cut down on single-use plastic?",
+      B2: "Have you ever thought about how fragile our ecological balance truly is? From my perspective, human activities—which accelerate climate change and habitat loss—place countless wild species at risk of extinction. All in all, persuading every community to adopt sustainable green habits is vital for our planet's survival."
+    },
+    sampleVi: "Bảo vệ Hành tinh Trái Đất, môi trường sống, hệ động thực vật (flora & fauna), cân bằng sinh thái và hành động xanh.",
+    vocab: [
+      { w: "planet", ipa: "/ˈplænɪt/", pos: "n", vi: "hành tinh", lvl: "A1", ex: "Earth is the only planet with liquid water." },
+      { w: "wildlife", ipa: "/ˈwaɪldlaɪf/", pos: "n", vi: "động vật hoang dã", lvl: "A1", ex: "Pollution harms wildlife in the ocean." },
+      { w: "habitat", ipa: "/ˈhæbɪtæt/", pos: "n", vi: "môi trường sống tự nhiên", lvl: "A2", ex: "Forests are the habitat of many rare birds." },
+      { w: "climate change", ipa: "/ˈklaɪmət tʃeɪndʒ/", pos: "n", vi: "biến đổi khí hậu", lvl: "A2", ex: "Climate change melts polar ice caps." },
+      { w: "flora and fauna", ipa: "/ˈflɔːrə ənd ˈfɔːnə/", pos: "n", vi: "hệ thực vật và động vật", lvl: "B1", ex: "National parks protect local flora and fauna." },
+      { w: "food chain", ipa: "/ˈfuːd tʃeɪn/", pos: "n", vi: "chuỗi thức ăn", lvl: "B1", ex: "Every animal plays a role in the food chain." },
+      { w: "nature reserve", ipa: "/ˈneɪtʃə rɪˈzɜːv/", pos: "n", vi: "khu bảo tồn thiên nhiên", lvl: "B1", ex: "Rare animals live safely in a nature reserve." },
+      { w: "ecological balance", ipa: "/ˌiːkəˈlɒdʒɪkl ˈbæləns/", pos: "n", vi: "cân bằng sinh thái", lvl: "B2", ex: "Cutting down forests upsets ecological balance." },
+      { w: "global warming", ipa: "/ˌɡləʊbl ˈwɔːmɪŋ/", pos: "n", vi: "nóng lên toàn cầu", lvl: "B2", ex: "Global warming threatens coastal landforms." },
+      { w: "threaten", ipa: "/ˈθretn/", pos: "v", vi: "đe dọa", lvl: "B2", ex: "Plastic waste threatens marine habitats." }
+    ],
+    qa: [
+      { lvl: "A1", q: "What simple green action can you do at school?", a: "I can recycle bottles and turn off lights to save energy.", kw: ["recycle", "lights", "save"] },
+      { lvl: "A2", q: "Why is Planet Earth special in the solar system?", a: "Earth has liquid water, fresh air, and diverse habitats for living things.", kw: ["Earth", "water", "habitats"] },
+      { lvl: "B1", q: "What are the main threats to flora and fauna?", a: "Deforestation, plastic pollution, and climate change threaten wildlife habitats.", kw: ["deforestation", "pollution", "climate", "habitats"] },
+      { lvl: "B2", q: "Why must we maintain ecological balance?", a: "Because every species is linked in the food chain; losing one can disrupt the entire ecosystem.", kw: ["ecological", "food chain", "species", "ecosystem"] }
+    ],
+    dialogue: {
+      title: "Persuading a friend to join Earth Day",
+      lines: [
+        { sp: "A", text: "Our school is organising a Green Earth campaign this Saturday. Why don't you join us?", vi: "Trường mình tổ chức chiến dịch Trái Đất Xanh thứ Bảy này. Sao cậu không tham gia?" },
+        { sp: "B", text: "What activities will we do there?", vi: "Ở đó tụi mình sẽ làm những hoạt động gì?" },
+        { sp: "A", text: "We'll plant trees and collect plastic waste, which really helps protect local habitats.", vi: "Tụi mình sẽ trồng cây và gom rác nhựa, điều đó giúp bảo vệ môi trường sống địa phương." },
+        { sp: "B", text: "That sounds meaningful! Climate change is threatening wildlife everywhere.", vi: "Nghe ý nghĩa quá! Biến đổi khí hậu đang đe dọa động vật hoang dã khắp nơi." },
+        { sp: "A", text: "How about bringing your reusable water bottle too?", vi: "Thế cậu mang theo bình nước tái sử dụng nữa nhé?" },
+        { sp: "B", text: "Great idea! Count me in for protecting our planet.", vi: "Ý tưởng tuyệt vời! Cho mình tham gia bảo vệ hành tinh với nhé." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "Why don't you + V? / How about + V-ing?", ex: "Why don't you recycle paper and plastic bottles?", vi: "Thuyết phục bạn làm điều có ích (Everyday English)." },
+      { lvl: "A2", pat: "We should + V ... to protect + [habitats/wildlife].", ex: "We should plant more trees to protect wildlife.", vi: "Đề xuất hành động bảo vệ môi trường." },
+      { lvl: "B1", pat: "Proper Noun, which/who ..., + V (Non-defining relative clause).", ex: "Planet Earth, which is our only home, needs urgent care.", vi: "Mệnh đề quan hệ không xác định (có dấu phẩy)." },
+      { lvl: "B2", pat: "If human activities continue to threaten ..., ecological balance will ...", ex: "If pollution continues to threaten oceans, ecological balance will collapse.", vi: "Lập luận nguyên nhân – hệ quả sinh thái." }
+    ]
+  },
+  {
+    id: 11,
+    title: "Unit 11: Electronic Devices",
+    vi: "Thiết bị điện tử",
+    grammar: "suggest / advise / recommend + V-ing / should",
+    everyday: "Checking understanding",
+    topicPrompt: "talk about an important electronic device for your studies and recommend safe ways to use it",
+    keywords: ["device", "portable", "smartphone", "touchscreen", "wireless", "digital", "screen", "convenient"],
+    samples: {
+      A1: "My favourite device is a tablet. It is light and small. I use it to study English and listen to music. It is very useful.",
+      A2: "Hello everyone! Today I want to talk about my favourite electronic device: a smartphone. First, it is portable, lightweight, and has a clear touchscreen. Second, it helps me look up English words and check pronunciation. In short, I recommend using it wisely for learning.",
+      B1: "To begin with, modern electronic devices such as tablets and e-readers have made studying much more convenient. I suggest using wireless digital tools to practice speaking and organise notes. However, doctors advise that students should limit screen time to protect their eyes and sleep.",
+      B2: "Have you ever imagined studying in the 21st century without portable digital devices? From my perspective, smart devices crafted from lightweight aluminium and glass empower learners to access global knowledge instantaneously. Nevertheless, I strongly recommend setting strict daily screen limits to prevent digital fatigue."
+    },
+    sampleVi: "Giới thiệu thiết bị điện tử hữu ích cho học tập (smartphone, tablet, e-reader, smartwatch) và cách sử dụng an toàn.",
+    vocab: [
+      { w: "electronic device", ipa: "/ɪˌlekˈtrɒnɪk dɪˈvaɪs/", pos: "n", vi: "thiết bị điện tử", lvl: "A1", ex: "A laptop is a useful electronic device." },
+      { w: "smartphone", ipa: "/ˈsmɑːtfəʊn/", pos: "n", vi: "điện thoại thông minh", lvl: "A1", ex: "I use my smartphone to check pronunciation." },
+      { w: "portable", ipa: "/ˈpɔːtəbl/", pos: "adj", vi: "di động, dễ mang theo", lvl: "A2", ex: "Tablets are portable and convenient." },
+      { w: "touchscreen", ipa: "/ˈtʌtʃskriːn/", pos: "n", vi: "màn hình cảm ứng", lvl: "A2", ex: "This e-reader has a smooth touchscreen." },
+      { w: "lightweight", ipa: "/ˈlaɪtweɪt/", pos: "adj", vi: "nhẹ cân", lvl: "B1", ex: "A lightweight laptop fits easily in my bag." },
+      { w: "wireless", ipa: "/ˈwaɪələs/", pos: "adj", vi: "không dây", lvl: "B1", ex: "Wireless headphones are great for shadowing." },
+      { w: "e-reader", ipa: "/ˈiː riːdə(r)/", pos: "n", vi: "máy đọc sách điện tử", lvl: "B1", ex: "An e-reader stores thousands of English books." },
+      { w: "screen time", ipa: "/ˈskriːn taɪm/", pos: "n", vi: "thời gian nhìn màn hình", lvl: "B1", ex: "Teens should limit screen time before bed." },
+      { w: "aluminium", ipa: "/ˌæljəˈmɪniəm/", pos: "n", vi: "nhôm (vật liệu vỏ máy)", lvl: "B2", ex: "The sleek laptop case is made of aluminium." },
+      { w: "virtual", ipa: "/ˈvɜːtʃuəl/", pos: "adj", vi: "ảo, trực tuyến", lvl: "B2", ex: "Virtual classrooms connect students globally." }
+    ],
+    qa: [
+      { lvl: "A1", q: "What electronic device do you use most?", a: "I use my smartphone most for studying and calling my family.", kw: ["smartphone", "studying", "device"] },
+      { lvl: "A2", q: "Why is a tablet convenient for students?", a: "It is portable, lightweight, and easy to use with a touchscreen.", kw: ["portable", "lightweight", "touchscreen"] },
+      { lvl: "B1", q: "What do you recommend to protect our eyes when using devices?", a: "I recommend taking a break every twenty minutes and limiting screen time at night.", kw: ["recommend", "break", "screen time"] },
+      { lvl: "B2", q: "How might electronic devices change learning in the future?", a: "Smart devices may integrate virtual tutors and real-time voice feedback to personalise every lesson.", kw: ["virtual", "devices", "learning", "future"] }
+    ],
+    dialogue: {
+      title: "Recommending a study device & checking understanding",
+      lines: [
+        { sp: "A", text: "I want to buy a portable device for reading English books. What do you suggest?", vi: "Mình muốn mua một thiết bị nhỏ gọn để đọc sách tiếng Anh. Cậu gợi ý gì?" },
+        { sp: "B", text: "I recommend buying an e-reader because its screen is very gentle on your eyes.", vi: "Mình khuyên mua máy đọc sách vì màn hình nó rất êm dịu cho mắt." },
+        { sp: "A", text: "That's smart! Can I also use it to look up new vocabulary?", vi: "Hay quá! Mình có thể dùng nó để tra từ vựng mới không?" },
+        { sp: "B", text: "Yes, just tap any word on the touchscreen to see its meaning. Do you follow me?", vi: "Được chứ, chỉ cần chạm vào từ trên màn hình cảm ứng là thấy nghĩa. Cậu hiểu ý mình chứ?" },
+        { sp: "A", text: "I got it! I also advise myself not to read too late at night.", vi: "Mình hiểu rồi! Mình cũng sẽ tự nhắc không đọc quá khuya." },
+        { sp: "B", text: "Exactly! Limiting screen time keeps your eyes healthy.", vi: "Chính xác! Giới hạn thời gian nhìn màn hình giúp mắt khỏe mạnh." }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "Do you follow me? / Do you understand? — Yes, I got it.", ex: "Tap the mic icon to record. Do you follow me?", vi: "Kiểm tra sự hiểu ý (Everyday English)." },
+      { lvl: "A2", pat: "I suggest / recommend + V-ing.", ex: "I suggest using wireless headphones for listening practice.", vi: "Gợi ý với V-ing." },
+      { lvl: "B1", pat: "S + advise / recommend + that + S + (should) + V.", ex: "Teachers advise that students should limit screen time.", vi: "Khuyên nhủ với mệnh đề should." },
+      { lvl: "B2", pat: "Despite its portable convenience, excessive reliance on ... can lead to ...", ex: "Despite its portable convenience, excessive screen time can lead to eye strain.", vi: "Đánh giá hai mặt của thiết bị điện tử." }
+    ]
+  },
+  {
+    id: 12,
+    title: "Unit 12: Career Choices",
+    vi: "Lựa chọn nghề nghiệp",
+    grammar: "Clauses of concession, result & reason",
+    everyday: "Expressing hope & responding",
+    topicPrompt: "talk about your future dream job, required skills, and why it matches your passion",
+    keywords: ["career", "passion", "creative", "vocational", "rewarding", "demanding", "skills", "future"],
+    samples: {
+      A1: "In the future, I want to be a teacher. I love English and children. It is a good job. I will study hard for my dream.",
+      A2: "Hello everyone! Today I want to talk about my future career choice. I want to become a software engineer because I love technology and creative tasks. Although the job is demanding, it is well-paid and interesting. Hopefully, I will achieve my dream.",
+      B1: "To begin with, choosing a career is a big decision for grade nine students. Since I am passionate about helping people, I hope to become a teacher or doctor. Besides academic subjects, developing soft skills or attending a vocational college gives us hands-on experience for the future.",
+      B2: "Have you ever wondered how AI and automation will reshape the future world of work? From my perspective, although repetitive jobs may decline, creative and people-centred careers remain deeply rewarding. All in all, aligning our personal passion with lifelong skills is such a smart strategy that we will thrive anywhere."
+    },
+    sampleVi: "Định hướng nghề nghiệp tương lai, đam mê cá nhân, kỹ năng mềm, học nghề (vocational college) và triển vọng công việc.",
+    vocab: [
+      { w: "career", ipa: "/kəˈrɪə(r)/", pos: "n", vi: "sự nghiệp, nghề nghiệp", lvl: "A1", ex: "Choosing a future career is very important." },
+      { w: "passion", ipa: "/ˈpæʃn/", pos: "n", vi: "niềm đam mê", lvl: "A1", ex: "Follow your passion when choosing a job." },
+      { w: "creative", ipa: "/kriˈeɪtɪv/", pos: "adj", vi: "sáng tạo", lvl: "A2", ex: "Fashion designers need to be very creative." },
+      { w: "software engineer", ipa: "/ˈsɒftweər ˌendʒɪˈnɪə(r)/", pos: "n", vi: "kỹ sư phần mềm", lvl: "A2", ex: "My brother works as a software engineer." },
+      { w: "vocational", ipa: "/vəʊˈkeɪʃənl/", pos: "adj", vi: "thuộc về hướng nghiệp, dạy nghề", lvl: "B1", ex: "Vocational colleges offer hands-on training." },
+      { w: "demanding", ipa: "/dɪˈmɑːndɪŋ/", pos: "adj", vi: "đòi hỏi cao, vất vả", lvl: "B1", ex: "Being a surgeon is a demanding job." },
+      { w: "rewarding", ipa: "/rɪˈwɔːdɪŋ/", pos: "adj", vi: "bổ ích, xứng đáng", lvl: "B1", ex: "Teaching is a truly rewarding career." },
+      { w: "repetitive", ipa: "/rɪˈpetətɪv/", pos: "adj", vi: "lặp đi lặp lại", lvl: "B2", ex: "Robots may replace repetitive factory tasks." },
+      { w: "decisive", ipa: "/dɪˈsaɪsɪv/", pos: "adj", vi: "quyết đoán", lvl: "B2", ex: "A good leader should be calm and decisive." },
+      { w: "soft skills", ipa: "/ˌsɒft ˈskɪlz/", pos: "n", vi: "kỹ năng mềm", lvl: "B2", ex: "Communication and teamwork are vital soft skills." }
+    ],
+    qa: [
+      { lvl: "A1", q: "What job do you want to do in the future?", a: "I want to be an English teacher because I love languages.", kw: ["want", "teacher", "future"] },
+      { lvl: "A2", q: "What qualities does a good designer or engineer need?", a: "They need to be creative, patient, and good at teamwork.", kw: ["creative", "patient", "teamwork"] },
+      { lvl: "B1", q: "Why do some students choose a vocational college after Grade 9?", a: "Because vocational courses provide practical hands-on skills and help them find jobs faster.", kw: ["vocational", "practical", "skills", "jobs"] },
+      { lvl: "B2", q: "How should teenagers prepare for the future world of work?", a: "Although academic grades matter, teens must also build creative thinking, English fluency, and decisive soft skills.", kw: ["although", "creative", "English", "soft skills"] }
+    ],
+    dialogue: {
+      title: "Discussing career choices & expressing hope",
+      lines: [
+        { sp: "A", text: "Have you decided on your career path after secondary school yet?", vi: "Cậu đã chọn hướng nghề nghiệp sau cấp 2 chưa?" },
+        { sp: "B", text: "Yes! Since I love coding, I want to become a software engineer.", vi: "Rồi! Vì mình thích lập trình nên mình muốn làm kỹ sư phần mềm." },
+        { sp: "A", text: "That sounds demanding, though it is very well-paid and creative.", vi: "Nghe đòi hỏi cao đấy, dù thu nhập tốt và rất sáng tạo." },
+        { sp: "B", text: "What about you? Are you going to high school or a vocational college?", vi: "Còn cậu thì sao? Cậu học THPT hay trường cao đẳng nghề?" },
+        { sp: "A", text: "I'm going to high school because I dream of becoming a rewarding English teacher.", vi: "Mình học THPT vì mình mơ trở thành giáo viên Tiếng Anh đầy ý nghĩa." },
+        { sp: "B", text: "Hopefully, we will both succeed in following our passions!", vi: "Hy vọng cả hai đứa mình đều thành công theo đuổi đam mê!" }
+      ]
+    },
+    patterns: [
+      { lvl: "A1", pat: "Hopefully, + S + will + V. — I hope so too!", ex: "Hopefully, I will pass the entrance exam with high marks.", vi: "Diễn đạt niềm hy vọng (Everyday English)." },
+      { lvl: "A2", pat: "I want to be a(n) ... because / since ...", ex: "I want to be a doctor since I love helping people.", vi: "Mệnh đề trạng ngữ chỉ nguyên nhân." },
+      { lvl: "B1", pat: "Although / Though + clause, + main clause.", ex: "Although the job is demanding, it is very rewarding.", vi: "Mệnh đề trạng ngữ chỉ sự nhượng bộ." },
+      { lvl: "B2", pat: "so + adj + that / such + (a/an) + adj + N + that", ex: "English is such a vital skill that it opens global career doors.", vi: "Mệnh đề trạng ngữ chỉ kết quả." }
+    ]
+  }
+];
+
+// Dữ liệu 12 mục khảo sát FLCAS từ tài liệu dự án SPEAK-WHEEL 9 (câu 3*, 7*, 11* đảo chiều)
+const FLCAS_ITEMS = [
+  { id: 1, rev: false, text: "Em thường cảm thấy không tự tin mỗi khi phải nói tiếng Anh trong giờ học." },
+  { id: 2, rev: false, text: "Em dễ bị lúng túng, quên từ vựng hoặc bí ý tưởng khi phải nói tiếng Anh mà chưa học thuộc trước." },
+  { id: 3, rev: true,  text: "Em cảm thấy thoải mái và sẵn sàng trao đổi bằng tiếng Anh theo cặp với bạn cùng bàn. (*)" },
+  { id: 4, rev: false, text: "Em thường bị ấp úng, dừng lại khá lâu giữa các câu khi cố gắng trình bày suy nghĩ bằng tiếng Anh." },
+  { id: 5, rev: false, text: "Em rất lo lắng rằng các bạn trong lớp sẽ cười chê nếu em phát âm sai tiếng Anh." },
+  { id: 6, rev: false, text: "Em sợ giáo viên sửa lỗi phát âm hoặc ngữ pháp ngay trước mặt cả lớp khi em đang nói." },
+  { id: 7, rev: true,  text: "Em không ngại mắc lỗi khi tập nói tiếng Anh vì em xem lỗi sai là cơ hội để tự sửa tốt hơn. (*)" },
+  { id: 8, rev: false, text: "Em luôn cảm thấy các bạn khác nói tiếng Anh trôi chảy và chuẩn hơn mình rất nhiều." },
+  { id: 9, rev: false, text: "Tim em đập nhanh hoặc cảm thấy hồi hộp mỗi khi biết mình sắp được gọi phát biểu bằng tiếng Anh." },
+  { id: 10, rev: false, text: "Em thường ngại xung phong trả lời các câu hỏi thảo luận bằng tiếng Anh ngay cả khi em biết ý trả lời." },
+  { id: 11, rev: true, text: "Em cảm thấy hứng thú và tự tin khi tự luyện nói tiếng Anh tại nhà theo các chủ đề lớp 9. (*)" },
+  { id: 12, rev: false, text: "Em cảm thấy áp lực khi phải nói tiếng Anh liên tục trong vòng 1 phút về một chủ đề quen thuộc." }
+];
+
+// ============================================================================
+// 2. HỆ THỐNG ÂM THANH WEB (WEB AUDIO API SFX + DICTIONARY API + SPEECHSYNTHESIS)
+// ============================================================================
+const SFX = {
+  ctx: null,
+  init() {
+    if (!this.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) this.ctx = new AC();
+    }
+    if (this.ctx && this.ctx.state === "suspended") {
+      this.ctx.resume().catch(() => {});
+    }
+  },
+  enabled() {
+    const el = document.getElementById("chkSfx");
+    return el ? el.checked : true;
+  },
+  tone(freq, dur = 0.12, type = "sine", vol = 0.12, delay = 0) {
+    if (!this.enabled()) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime + delay;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(vol, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + dur);
+    } catch (e) {}
+  },
+  spin() {
+    [320, 420, 520, 640, 780].forEach((f, i) => this.tone(f, 0.06, "triangle", 0.09, i * 0.055));
+  },
+  start() {
+    this.tone(523.25, 0.1, "sine", 0.12, 0);
+    this.tone(659.25, 0.14, "sine", 0.12, 0.09);
+  },
+  stop() {
+    this.tone(587.33, 0.1, "sine", 0.1, 0);
+    this.tone(440, 0.15, "sine", 0.1, 0.09);
+  },
+  hit() {
+    this.tone(587.33, 0.09, "sine", 0.12, 0);
+    this.tone(880, 0.18, "sine", 0.12, 0.08);
+  },
+  miss() {
+    this.tone(240, 0.16, "sawtooth", 0.06, 0);
+  }
+};
+
+const AudioEngine = {
+  voices: [],
+  dictCache: {},
+  currentAudioEl: null,
+  queueAborted: false,
+
+  init() {
+    if (!("speechSynthesis" in window)) return;
+    const populate = () => {
+      const all = window.speechSynthesis.getVoices() || [];
+      this.voices = all.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+      this.renderVoiceOptions();
+    };
+    populate();
+    window.speechSynthesis.onvoiceschanged = populate;
+    // Một số trình duyệt nạp giọng trễ 300-800ms
+    setTimeout(populate, 450);
+    setTimeout(populate, 1200);
+  },
+
+  renderVoiceOptions() {
+    const sel = document.getElementById("voiceSelect");
+    if (!sel) return;
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">Giọng tự động</option>';
+    this.voices.forEach((v, idx) => {
+      const opt = document.createElement("option");
+      opt.value = idx;
+      opt.textContent = `${v.name.slice(0, 22)} (${v.lang})`;
+      sel.appendChild(opt);
+    });
+    if (prev && sel.querySelector(`option[value="${prev}"]`)) sel.value = prev;
+  },
+
+  pickVoice(accent) {
+    const sel = document.getElementById("voiceSelect");
+    if (sel && sel.value !== "" && this.voices[Number(sel.value)]) {
+      return this.voices[Number(sel.value)];
+    }
+    const target = (accent || "en-US").toLowerCase();
+    // Ưu tiên giọng Google / Microsoft Natural / Apple tự nhiên
+    const matching = this.voices.filter(v => v.lang.toLowerCase().startsWith(target));
+    const pool = matching.length ? matching : this.voices;
+    return pool.find(v => /google|natural|samantha|daniel|aria|jenny/i.test(v.name)) || pool[0] || null;
+  },
+
+  stop() {
+    this.queueAborted = true;
+    if (this.currentAudioEl) {
+      try { this.currentAudioEl.pause(); this.currentAudioEl.currentTime = 0; } catch (e) {}
+      this.currentAudioEl = null;
+    }
+    if ("speechSynthesis" in window) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
+    const badge = document.getElementById("shadowStatusBadge");
+    if (badge) {
+      badge.textContent = "Đã dừng âm thanh";
+      badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600";
+    }
+  },
+
+  // Đọc văn bản dài an toàn bằng cách chia câu (khắc phục lỗi tự ngắt 15s trên Chrome)
+  speak(text, customRate = null, onDone = null, pitch = 1.0) {
+    this.stop();
+    this.queueAborted = false;
+    const clean = (text || "").trim();
+    if (!clean) { if (onDone) onDone(); return; }
+
+    if (!("speechSynthesis" in window)) {
+      showToast("Trình duyệt không hỗ trợ SpeechSynthesis. Hãy dùng Chrome/Edge!", "warn");
+      if (onDone) onDone();
+      return;
+    }
+
+    const accent = document.getElementById("accentSelect")?.value || "en-US";
+    const rate = customRate !== null ? customRate : parseFloat(document.getElementById("rateSelect")?.value || "1.0");
+    const sentences = clean.match(/[^.!?]+[.!?]*/g) || [clean];
+    const badge = document.getElementById("shadowStatusBadge");
+    if (badge) {
+      badge.textContent = `🔊 Đang đọc (${rate}x · ${accent})...`;
+      badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800";
+    }
+
+    let idx = 0;
+    const speakNext = () => {
+      if (this.queueAborted || idx >= sentences.length) {
+        if (!this.queueAborted && badge) {
+          badge.textContent = "✅ Hoàn tất đọc mẫu";
+          badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800";
+        }
+        if (onDone && !this.queueAborted) onDone();
+        return;
+      }
+      const chunk = sentences[idx++].trim();
+      if (!chunk) { speakNext(); return; }
+
+      const utter = new SpeechSynthesisUtterance(chunk);
+      utter.lang = accent;
+      utter.rate = rate;
+      utter.pitch = pitch;
+      const v = this.pickVoice(accent);
+      if (v) utter.voice = v;
+      utter.onend = () => speakNext();
+      utter.onerror = () => speakNext();
+
+      // Độ trễ nhỏ 35ms tránh lỗi Chrome nuốt câu ngay sau cancel()
+      setTimeout(() => {
+        if (!this.queueAborted) {
+          try {
+            window.speechSynthesis.resume();
+            window.speechSynthesis.speak(utter);
+          } catch (e) { speakNext(); }
+        }
+      }, 35);
+    };
+    speakNext();
+  },
+
+  // Phát âm từ vựng: ưu tiên âm thanh MP3 bản xứ từ Free Dictionary Web API (nếu online & bật), tự động dự phòng SpeechSynthesis
+  async speakWord(word, customRate = null) {
+    this.stop();
+    this.queueAborted = false;
+    const useWebDict = document.getElementById("chkWebDictAudio")?.checked;
+    const rate = customRate !== null ? customRate : parseFloat(document.getElementById("rateSelect")?.value || "1.0");
+    const accent = document.getElementById("accentSelect")?.value || "en-US";
+    const isSingleWord = /^[a-zA-Z-]+$/.test(word.trim());
+
+    if (useWebDict && isSingleWord && rate >= 0.9) {
+      const key = `${word.toLowerCase()}_${accent}`;
+      try {
+        let audioUrl = this.dictCache[key];
+        if (audioUrl === undefined) {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 1600);
+          const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.trim().toLowerCase())}`, { signal: controller.signal });
+          clearTimeout(timer);
+          if (res.ok) {
+            const data = await res.json();
+            const phonetics = (data[0]?.phonetics || []).filter(p => p.audio && p.audio.startsWith("http"));
+            const prefTag = accent === "en-GB" ? "-uk" : "-us";
+            const matched = phonetics.find(p => p.audio.toLowerCase().includes(prefTag)) || phonetics[0];
+            audioUrl = matched ? matched.audio : null;
+          } else {
+            audioUrl = null;
+          }
+          this.dictCache[key] = audioUrl;
+        }
+        if (audioUrl && !this.queueAborted) {
+          const audio = new Audio(audioUrl);
+          this.currentAudioEl = audio;
+          await audio.play();
+          return;
+        }
+      } catch (e) {
+        // Bỏ qua lỗi mạng và chuyển mượt sang Web SpeechSynthesis
+      }
+    }
+    this.speak(word, rate);
+  },
+
+  // Đọc tuần tự danh sách câu (cho Play All Vocab / Q&A / Dialogue / Patterns)
+  speakSequence(items, onStep = null, onComplete = null) {
+    this.stop();
+    this.queueAborted = false;
+    let i = 0;
+    const next = () => {
+      if (this.queueAborted || i >= items.length) {
+        if (onComplete && !this.queueAborted) onComplete();
+        return;
+      }
+      const cur = items[i];
+      if (onStep) onStep(i, cur);
+      i++;
+      this.speak(cur.text, cur.rate || null, () => {
+        if (!this.queueAborted) setTimeout(next, 350);
+      }, cur.pitch || 1.0);
+    };
+    next();
+  }
+};
+
+// ============================================================================
+// 3. TIỆN ÍCH SO KHỚP PHÁT ÂM, THÔNG BÁO & TRẠNG THÁI CHUNG
+// ============================================================================
+let state = {
+  unitIdx: 0,
+  roleIdx: 0,
+  contextIdx: 0,
+  level: "A2",
+  activeTab: "speakcheck",
+  round: 1,
+  roundDuration: 60,
+  secondsLeft: 60,
+  timerInterval: null,
+  startTimeMs: null,
+  isRecording: false,
+  recognition: null,
+  finalTranscript: "",
+  interimTranscript: "",
+  matchedKw: new Set()
+};
+
+// Trạng thái hộp kiểm tra phát âm nhanh
+let qcState = {
+  target: "",
+  keywords: [],
+  hint: "",
+  isListening: false,
+  rec: null,
+  onPassCallback: null
+};
+
+const STORAGE_KEY = "speak_check_9_pro_history_v2";
+
+function escapeHtml(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function showToast(msg, type = "info") {
+  const container = document.getElementById("toastContainer");
+  const el = document.createElement("div");
+  const palette = {
+    info: "bg-slate-900 text-white border-slate-700",
+    ok: "bg-emerald-700 text-white border-emerald-500",
+    warn: "bg-amber-600 text-white border-amber-400",
+    err: "bg-rose-700 text-white border-rose-500"
+  };
+  el.className = `pointer-events-auto px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-semibold shadow-lg transition-all ${palette[type] || palette.info}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => { el.style.opacity = "0"; setTimeout(() => el.remove(), 300); }, 3200);
+}
+
+function normalizeWords(str) {
+  return (str || "").toLowerCase().replace(/[^a-z0-9'\s-]/g, " ").split(/\s+/).filter(Boolean);
+}
+
+// Tính độ tương đồng đơn giản giữa chuỗi nói và chuỗi mục tiêu (trả về %)
+function evaluateSpeechSimilarity(spoken, target, keyList = []) {
+  const sWords = normalizeWords(spoken);
+  const tWords = normalizeWords(target);
+  if (!sWords.length) return { score: 0, hitCount: 0, totalKey: keyList.length || tWords.length, hits: [] };
+
+  const sJoined = " " + sWords.join(" ") + " ";
+  const compareList = keyList.length ? keyList : tWords.filter(w => w.length > 2);
+  const effectiveList = compareList.length ? compareList : tWords;
+  const hits = [];
+
+  effectiveList.forEach(item => {
+    const clean = item.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim();
+    if (!clean) return;
+    const root = clean.length > 4 && !clean.includes(" ") ? clean.slice(0, -1) : clean;
+    if (sJoined.includes(clean) || (root.length >= 4 && sJoined.includes(root))) {
+      hits.push(item);
+    }
+  });
+
+  const ratio = effectiveList.length ? (hits.length / effectiveList.length) : 0;
+  return {
+    score: Math.min(100, Math.round(ratio * 100)),
+    hitCount: hits.length,
+    totalKey: effectiveList.length,
+    hits
+  };
+}
+
+function countWords(str) {
+  return normalizeWords(str).length;
+}
+
+function computeWPM(words, elapsedSec) {
+  if (!words || elapsedSec <= 0) return 0;
+  return Math.round((words / Math.max(elapsedSec, 3)) * 60);
+}
+
+// ============================================================================
+// 4. KHỞI TẠO BỘ CHỌN & ĐỒNG BỘ MỌI PHÂN HỆ
+// ============================================================================
+const dom = {
+  unitSelect: document.getElementById("unitSelect"),
+  roleSelect: document.getElementById("roleSelect"),
+  contextSelect: document.getElementById("contextSelect"),
+  levelSelect: document.getElementById("levelSelect"),
+  studentCode: document.getElementById("studentCode"),
+  comboBanner: document.getElementById("comboBanner"),
+  pillUnit: document.getElementById("pillUnit"),
+  pillRole: document.getElementById("pillRole"),
+  pillContext: document.getElementById("pillContext"),
+  pillLevel: document.getElementById("pillLevel"),
+  pillGrammar: document.getElementById("pillGrammar"),
+  promptTask: document.getElementById("promptTask"),
+  scaffoldLevelTag: document.getElementById("scaffoldLevelTag"),
+  scaffoldList: document.getElementById("scaffoldList"),
+  sampleTextEn: document.getElementById("sampleTextEn"),
+  sampleTextVi: document.getElementById("sampleTextVi"),
+  sampleWordCount: document.getElementById("sampleWordCount"),
+  kwGrid: document.getElementById("kwGrid"),
+  timerDisplay: document.getElementById("timerDisplay"),
+  wordCountDisplay: document.getElementById("wordCountDisplay"),
+  wpmDisplay: document.getElementById("wpmDisplay"),
+  kwHitDisplay: document.getElementById("kwHitDisplay"),
+  transcriptBox: document.getElementById("transcriptBox"),
+  browserWarn: document.getElementById("browserWarn"),
+  feedbackBanner: document.getElementById("feedbackBanner"),
+  rubricEstimateBox: document.getElementById("rubricEstimateBox"),
+  btnStartRec: document.getElementById("btnStartRec"),
+  btnStopRec: document.getElementById("btnStopRec"),
+  historyBody: document.getElementById("historyBody")
+};
+
+function initSelectors() {
+  UNITS.forEach((u, idx) => {
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = `${u.title} (${u.vi})`;
+    dom.unitSelect.appendChild(opt);
+  });
+  ROLES.forEach((r, idx) => {
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = r.label;
+    dom.roleSelect.appendChild(opt);
+  });
+  CONTEXTS.forEach((c, idx) => {
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = c.label;
+    dom.contextSelect.appendChild(opt);
+  });
+
+  // Đọc tham số URL ?unit=1..12 & ?level=A1..B2 từ Mã QR trên đĩa xoay
+  const params = new URLSearchParams(window.location.search);
+  const qUnit = parseInt(params.get("unit"), 10);
+  if (!isNaN(qUnit) && qUnit >= 1 && qUnit <= UNITS.length) {
+    state.unitIdx = qUnit - 1;
+    dom.unitSelect.value = state.unitIdx;
+  }
+  const qLevel = (params.get("level") || "").toUpperCase();
+  if (LEVEL_INFO[qLevel]) {
+    state.level = qLevel;
+    dom.levelSelect.value = qLevel;
+  }
+}
+
+function renderAllViews() {
+  const unit = UNITS[state.unitIdx];
+  const role = ROLES[state.roleIdx];
+  const ctx = CONTEXTS[state.contextIdx];
+  const lvl = LEVEL_INFO[state.level];
+
+  // Cập nhật Banner tổ hợp
+  dom.pillUnit.textContent = unit.title;
+  dom.pillRole.textContent = `🎭 ${role.id}`;
+  dom.pillContext.textContent = ctx.label;
+  dom.pillLevel.textContent = lvl.name;
+  dom.pillLevel.className = `text-xs font-extrabold px-2.5 py-1 rounded-full shadow-sm ${lvl.badge}`;
+  dom.pillGrammar.textContent = `📘 ${unit.grammar}`;
+  dom.comboBanner.className = `mt-4 rounded-xl p-4 border-l-4 transition-all ${lvl.border}`;
+  dom.promptTask.textContent = `Nhiệm vụ (${state.level}): ${role.intro} ${unit.topicPrompt}.`;
+
+  // Cập nhật Giàn giáo & Shadowing
+  dom.scaffoldLevelTag.textContent = state.level;
+  dom.scaffoldList.innerHTML = lvl.frames.map(f => `<li class="flex gap-1.5"><span class="text-sky-600 font-bold">▸</span><span>${escapeHtml(f)}</span></li>`).join("");
+
+  const sampleEn = unit.samples[state.level] || unit.samples.A2;
+  dom.sampleTextEn.textContent = sampleEn;
+  dom.sampleTextVi.textContent = `Gợi ý nội dung: ${unit.sampleVi}`;
+  dom.sampleWordCount.textContent = `${countWords(sampleEn)} từ mẫu`;
+
+  resetSpeakSession(true);
+  renderKeywords(false);
+  renderVocabTab();
+  renderQATab();
+  renderDialogueTab();
+  renderPatternsTab();
+}
+
+// ============================================================================
+// 5. HIỂN THỊ TỪ KHÓA & CÁC TAB CHUYÊN SÂU (VOCAB, Q&A, DIALOGUE, PATTERNS)
+// ============================================================================
+function renderKeywords(hasEvaluated = false) {
+  const unit = UNITS[state.unitIdx];
+  dom.kwGrid.innerHTML = "";
+  unit.keywords.forEach(kw => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    const isHit = state.matchedKw.has(kw.toLowerCase());
+    if (isHit) {
+      btn.className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-800 border-2 border-emerald-500 transition hover:-translate-y-0.5";
+      btn.textContent = `✅ ${kw}`;
+    } else if (hasEvaluated) {
+      btn.className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-rose-100 text-rose-700 border-2 border-rose-500 transition hover:-translate-y-0.5";
+      btn.textContent = `🔊 ${kw} (đọc lại)`;
+    } else {
+      btn.className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 border border-slate-300 hover:bg-sky-50 hover:border-sky-400 transition hover:-translate-y-0.5";
+      btn.textContent = `🔊 ${kw}`;
+    }
+    btn.title = "Bấm để nghe phát âm chuẩn từ này";
+    btn.addEventListener("click", () => AudioEngine.speakWord(kw, 0.9));
+    dom.kwGrid.appendChild(btn);
+  });
+  dom.kwHitDisplay.textContent = `${state.matchedKw.size}/${unit.keywords.length}`;
+}
+
+function getLevelChipHtml(lvl) {
+  const map = {
+    A1: "bg-sky-100 text-sky-800",
+    A2: "bg-emerald-100 text-emerald-800",
+    B1: "bg-amber-100 text-amber-800",
+    B2: "bg-rose-100 text-rose-800"
+  };
+  return `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${map[lvl] || "bg-slate-100 text-slate-700"}">${lvl}</span>`;
+}
+
+function renderVocabTab() {
+  const unit = UNITS[state.unitIdx];
+  const filter = document.getElementById("vocabLevelFilter").value;
+  document.getElementById("vocabHeaderTitle").textContent = `📚 Từ vựng ${unit.title} (${unit.vi})`;
+
+  const list = filter === "ALL" ? unit.vocab : unit.vocab.filter(v => v.lvl === filter);
+  const grid = document.getElementById("vocabGrid");
+  if (!list.length) {
+    grid.innerHTML = `<div class="col-span-full text-center py-8 text-sm text-slate-500 italic">Không có từ vựng thuộc mức ${filter} trong Unit này. Hãy chọn "Tất cả cấp độ".</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((v, i) => `
+    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:shadow-sm transition flex flex-col justify-between gap-2" data-vocab-idx="${i}">
+      <div>
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-baseline gap-2 flex-wrap">
+            <span class="text-base font-extrabold text-slate-900">${escapeHtml(v.w)}</span>
+            <span class="text-xs font-mono text-sky-700">${escapeHtml(v.ipa)}</span>
+            <span class="text-[11px] font-semibold text-slate-500">(${escapeHtml(v.pos)})</span>
+          </div>
+          ${getLevelChipHtml(v.lvl)}
+        </div>
+        <div class="text-sm font-semibold text-emerald-800 mt-0.5">${escapeHtml(v.vi)}</div>
+        <div class="text-xs text-slate-600 mt-1 italic">“${escapeHtml(v.ex)}”</div>
+      </div>
+      <div class="flex flex-wrap gap-1.5 pt-2 border-t border-slate-200/70">
+        <button type="button" class="btn-v-play px-2.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold" data-word="${escapeHtml(v.w)}">🔊 Nghe từ</button>
+        <button type="button" class="btn-v-slow px-2.5 py-1.5 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-800 text-xs font-bold" data-word="${escapeHtml(v.w)}">🐢 Chậm</button>
+        <button type="button" class="btn-v-ex px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold" data-ex="${escapeHtml(v.ex)}">💬 Nghe câu</button>
+        <button type="button" class="btn-v-check px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold ml-auto" data-word="${escapeHtml(v.w)}" data-vi="${escapeHtml(v.vi)}">🎙 Check</button>
+      </div>
+    </div>
+  `).join("");
+
+  grid.querySelectorAll(".btn-v-play").forEach(b => b.addEventListener("click", () => AudioEngine.speakWord(b.dataset.word, 1.0)));
+  grid.querySelectorAll(".btn-v-slow").forEach(b => b.addEventListener("click", () => AudioEngine.speak(b.dataset.word, 0.72)));
+  grid.querySelectorAll(".btn-v-ex").forEach(b => b.addEventListener("click", () => AudioEngine.speak(b.dataset.ex, 0.95)));
+  grid.querySelectorAll(".btn-v-check").forEach(b => b.addEventListener("click", () => {
+    openQuickCheck(`Check phát âm từ vựng`, b.dataset.word, [b.dataset.word], `Nghĩa tiếng Việt: ${b.dataset.vi}`);
+  }));
+}
+
+function renderQATab() {
+  const unit = UNITS[state.unitIdx];
+  document.getElementById("qaHeaderTitle").textContent = `❓ Câu hỏi ngắn phản xạ — ${unit.title}`;
+  const wrap = document.getElementById("qaList");
+  wrap.innerHTML = unit.qa.map((item, idx) => `
+    <div class="p-4 rounded-xl border ${item.lvl === state.level ? "border-sky-400 bg-sky-50/40" : "border-slate-200 bg-slate-50/60"} space-y-2">
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-xs font-extrabold text-slate-500">CÂU HỎI ${idx + 1} ${item.lvl === state.level ? "· ⭐ Đúng cấp độ đang chọn" : ""}</span>
+        ${getLevelChipHtml(item.lvl)}
+      </div>
+      <div class="text-sm sm:text-base font-extrabold text-slate-900">Q: ${escapeHtml(item.q)}</div>
+      <div class="p-3 rounded-lg bg-white border border-slate-200 text-xs sm:text-sm text-slate-700">
+        <span class="font-bold text-emerald-700">Gợi ý trả lời:</span> ${escapeHtml(item.a)}
+        <div class="mt-1.5 flex flex-wrap gap-1">
+          ${item.kw.map(k => `<span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">${escapeHtml(k)}</span>`).join("")}
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 pt-1">
+        <button type="button" class="btn-qa-q px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold" data-text="${escapeHtml(item.q)}">🔊 Nghe câu hỏi</button>
+        <button type="button" class="btn-qa-a px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold" data-text="${escapeHtml(item.a)}">🔊 Nghe đáp án mẫu</button>
+        <button type="button" class="btn-qa-check px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold ml-auto" data-idx="${idx}">🎙 Trả lời & Check</button>
+      </div>
+    </div>
+  `).join("");
+
+  wrap.querySelectorAll(".btn-qa-q").forEach(b => b.addEventListener("click", () => AudioEngine.speak(b.dataset.text, 0.95)));
+  wrap.querySelectorAll(".btn-qa-a").forEach(b => b.addEventListener("click", () => AudioEngine.speak(b.dataset.text, 0.92)));
+  wrap.querySelectorAll(".btn-qa-check").forEach(b => b.addEventListener("click", () => {
+    const item = unit.qa[Number(b.dataset.idx)];
+    openQuickCheck(`Trả lời câu hỏi (${item.lvl})`, item.a, item.kw, `Câu hỏi: "${item.q}" — Từ khóa cần có: ${item.kw.join(", ")}`);
+  }));
+}
+
+function renderDialogueTab() {
+  const unit = UNITS[state.unitIdx];
+  document.getElementById("dialogueHeaderTitle").textContent = `💬 Hội thoại: ${unit.dialogue.title}`;
+  document.getElementById("dialogueSubtitle").textContent = `Everyday English: ${unit.everyday} · Ngữ cảnh: ${CONTEXTS[state.contextIdx].label}`;
+  document.getElementById("roleplayBanner").classList.add("hidden");
+
+  const wrap = document.getElementById("dialogueList");
+  wrap.innerHTML = unit.dialogue.lines.map((ln, idx) => {
+    const isA = ln.sp === "A";
+    return `
+      <div id="dlg-line-${idx}" class="p-3.5 rounded-xl border ${isA ? "bg-sky-50/60 border-sky-200 mr-0 sm:mr-10" : "bg-emerald-50/60 border-emerald-200 ml-0 sm:ml-10"} transition">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="text-xs font-extrabold px-2 py-0.5 rounded-full ${isA ? "bg-sky-600 text-white" : "bg-emerald-600 text-white"}">
+              ${isA ? "Vai A (Máy / Bạn)" : "Vai B (Em nhập vai)"}
+            </span>
+            <p class="text-sm sm:text-base font-bold text-slate-900 mt-1.5">${escapeHtml(ln.text)}</p>
+            <p class="text-xs text-slate-500 italic mt-0.5">${escapeHtml(ln.vi)}</p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
+            <button type="button" class="btn-dlg-play px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold" data-idx="${idx}">🔊 Nghe</button>
+            <button type="button" class="btn-dlg-check px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold" data-idx="${idx}">🎙 Check</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  wrap.querySelectorAll(".btn-dlg-play").forEach(b => b.addEventListener("click", () => {
+    const ln = unit.dialogue.lines[Number(b.dataset.idx)];
+    AudioEngine.speak(ln.text, null, null, ln.sp === "A" ? 1.05 : 0.92);
+  }));
+  wrap.querySelectorAll(".btn-dlg-check").forEach(b => b.addEventListener("click", () => {
+    const ln = unit.dialogue.lines[Number(b.dataset.idx)];
+    openQuickCheck(`Check câu hội thoại (${ln.sp})`, ln.text, [], `Nghĩa: ${ln.vi}`);
+  }));
+}
+
+function renderPatternsTab() {
+  const unit = UNITS[state.unitIdx];
+  document.getElementById("patternHeaderTitle").textContent = `🧩 Luyện Mẫu câu & Ngữ pháp — ${unit.title}`;
+  const wrap = document.getElementById("patternsList");
+  wrap.innerHTML = unit.patterns.map((p, idx) => `
+    <div class="p-4 rounded-xl border ${p.lvl === state.level ? "border-indigo-400 bg-indigo-50/40" : "border-slate-200 bg-slate-50/60"} space-y-2">
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-xs font-extrabold text-indigo-800 uppercase">Mẫu câu ${idx + 1} · ${escapeHtml(p.vi)}</span>
+        ${getLevelChipHtml(p.lvl)}
+      </div>
+      <div class="text-sm font-mono font-bold text-slate-800 bg-white px-3 py-2 rounded-lg border border-slate-200">
+        ${escapeHtml(p.pat)}
+      </div>
+      <div class="text-sm sm:text-base font-bold text-emerald-900">
+        Ví dụ: “${escapeHtml(p.ex)}”
+      </div>
+      <div class="flex flex-wrap gap-2 pt-1">
+        <button type="button" class="btn-pat-slow px-3 py-1.5 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-800 text-xs font-bold" data-text="${escapeHtml(p.ex)}">🐢 Nghe chậm</button>
+        <button type="button" class="btn-pat-play px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold" data-text="${escapeHtml(p.ex)}">🔊 Nghe chuẩn</button>
+        <button type="button" class="btn-pat-check px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold ml-auto" data-idx="${idx}">🎙 Đọc & Check mẫu câu</button>
+      </div>
+    </div>
+  `).join("");
+
+  wrap.querySelectorAll(".btn-pat-slow").forEach(b => b.addEventListener("click", () => AudioEngine.speak(b.dataset.text, 0.78)));
+  wrap.querySelectorAll(".btn-pat-play").forEach(b => b.addEventListener("click", () => AudioEngine.speak(b.dataset.text, 0.98)));
+  wrap.querySelectorAll(".btn-pat-check").forEach(b => b.addEventListener("click", () => {
+    const p = unit.patterns[Number(b.dataset.idx)];
+    openQuickCheck(`Luyện nói mẫu câu (${p.lvl})`, p.ex, [], `Cấu trúc: ${p.pat} (${p.vi})`);
+  }));
+}
+
+// ============================================================================
+// 6. TRẠM NÓI CHÍNH SPEAK-CHECK (60s - 45s - 30s + RUBRIC + WPM)
+// ============================================================================
+function showWarn(msg) {
+  dom.browserWarn.textContent = "⚠️ " + msg;
+  dom.browserWarn.classList.remove("hidden");
+}
+function hideWarn() { dom.browserWarn.classList.add("hidden"); }
+
+function selectRound(roundNum, sec) {
+  if (state.isRecording) stopSpeaking(false);
+  state.round = roundNum;
+  state.roundDuration = sec;
+  document.querySelectorAll(".round-btn").forEach(b => {
+    b.classList.remove("border-sky-600", "bg-sky-50", "text-slate-900");
+    b.classList.add("border-slate-200", "bg-slate-50", "text-slate-700");
+  });
+  const active = document.getElementById(`roundBtn${roundNum}`);
+  active.classList.remove("border-slate-200", "bg-slate-50", "text-slate-700");
+  active.classList.add("border-sky-600", "bg-sky-50", "text-slate-900");
+  resetSpeakSession(true);
+}
+
+function resetSpeakSession(hideResults = true) {
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  state.timerInterval = null;
+  state.isRecording = false;
+  state.secondsLeft = state.roundDuration;
+  state.startTimeMs = null;
+  state.finalTranscript = "";
+  state.interimTranscript = "";
+  state.matchedKw.clear();
+
+  dom.timerDisplay.textContent = `${state.secondsLeft}s`;
+  dom.timerDisplay.classList.remove("text-rose-600", "rec-pulse");
+  dom.wordCountDisplay.textContent = "0";
+  dom.wpmDisplay.textContent = "0";
+  dom.btnStartRec.disabled = false;
+  dom.btnStopRec.disabled = true;
+  dom.transcriptBox.textContent = 'Nhấn "Bắt đầu nói (Micro)" và nói tiếng Anh về chủ đề đã chọn...';
+  if (hideResults) {
+    dom.feedbackBanner.classList.add("hidden");
+    dom.rubricEstimateBox.classList.add("hidden");
+  }
+  renderKeywords(false);
+}
+
+function updateTranscriptView(isFinalEval = false) {
+  const unit = UNITS[state.unitIdx];
+  const combined = (state.finalTranscript + " " + state.interimTranscript).trim();
+  const lowerCombined = combined.toLowerCase();
+
+  state.matchedKw.clear();
+  unit.keywords.forEach(kw => {
+    const kLow = kw.toLowerCase();
+    const root = kLow.length > 4 ? kLow.slice(0, -1) : kLow;
+    if (lowerCombined.includes(kLow) || (root.length >= 4 && lowerCombined.includes(root))) {
+      state.matchedKw.add(kLow);
+    }
+  });
+
+  if (!combined) {
+    dom.transcriptBox.textContent = 'Nhấn "Bắt đầu nói (Micro)" và nói tiếng Anh về chủ đề đã chọn...';
+  } else {
+    const words = state.finalTranscript.trim() ? state.finalTranscript.trim().split(/\s+/) : [];
+    const htmlFinal = words.map(w => {
+      const cleanW = w.toLowerCase().replace(/[^a-z-]/g, "");
+      const isTarget = unit.keywords.some(kw => {
+        const k = kw.toLowerCase();
+        return cleanW === k || (k.length > 4 && cleanW.startsWith(k.slice(0, -1)));
+      });
+      return isTarget ? `<span class="word-hit">${escapeHtml(w)}</span>` : escapeHtml(w);
+    }).join(" ");
+    const htmlInterim = state.interimTranscript ? ` <span class="interim-text">${escapeHtml(state.interimTranscript)}</span>` : "";
+    dom.transcriptBox.innerHTML = htmlFinal + htmlInterim;
+  }
+
+  const totalWords = countWords(combined);
+  dom.wordCountDisplay.textContent = totalWords;
+  const elapsed = state.startTimeMs ? (Date.now() - state.startTimeMs) / 1000 : 0;
+  dom.wpmDisplay.textContent = computeWPM(totalWords, elapsed);
+  renderKeywords(isFinalEval);
+}
+
+function calculateRubricEstimate(words, wpm, kwHits, kwTotal) {
+  const kwRatio = kwTotal ? kwHits / kwTotal : 0;
+  // 1. Phát âm (2.5) dựa trên tỉ lệ nhận diện rõ từ khóa
+  const pron = Math.min(2.5, Math.max(0.75, Math.round((1.0 + kwRatio * 1.5) * 4) / 4));
+  // 2. Từ vựng & Ngữ pháp (2.5) dựa trên độ dài & từ khóa chủ đề
+  const lex = Math.min(2.5, Math.max(0.75, Math.round((0.75 + kwRatio * 1.1 + Math.min(words / 55, 1) * 0.65) * 4) / 4));
+  // 3. Độ trôi chảy (2.5) theo khung WPM của Rubric SPEAK-WHEEL 9 (>=85 XS, 65-84 Khá, 45-64 TB)
+  let flu = 1.0;
+  if (wpm >= 85) flu = 2.5;
+  else if (wpm >= 65) flu = 2.0;
+  else if (wpm >= 45) flu = 1.5;
+  else if (wpm >= 25) flu = 1.25;
+  // 4. Hoàn thành nhiệm vụ (2.5)
+  const task = Math.min(2.5, Math.max(1.0, Math.round((1.0 + Math.min(words / 40, 1) * 0.9 + kwRatio * 0.6) * 4) / 4));
+  const total = Math.round((pron + lex + flu + task) * 100) / 100;
+  return { pron, lex, flu, task, total };
+}
+
+function startSpeaking() {
+  hideWarn();
+  AudioEngine.stop();
+  dom.feedbackBanner.classList.add("hidden");
+
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    showWarn("Trình duyệt này chưa hỗ trợ Web Speech Recognition. Em hãy dùng Google Chrome / Microsoft Edge, hoặc bấm nút 'Nhập text kiểm tra' / 'Chạy thử Demo'!");
+    document.getElementById("manualInputBox").classList.remove("hidden");
+    return;
+  }
+
+  resetSpeakSession(true);
+  const rec = new SpeechRec();
+  rec.lang = document.getElementById("accentSelect").value || "en-US";
+  rec.continuous = true;
+  rec.interimResults = true;
+  state.recognition = rec;
+
+  rec.onstart = () => {
+    SFX.start();
+    state.isRecording = true;
+    state.startTimeMs = Date.now();
+    dom.btnStartRec.disabled = true;
+    dom.btnStopRec.disabled = false;
+    dom.timerDisplay.classList.add("text-rose-600", "rec-pulse");
+
+    state.timerInterval = setInterval(() => {
+      state.secondsLeft--;
+      dom.timerDisplay.textContent = `${Math.max(state.secondsLeft, 0)}s`;
+      updateTranscriptView(false);
+      if (state.secondsLeft <= 0) stopSpeaking(true);
+    }, 1000);
+  };
+
+  rec.onresult = (event) => {
+    let interim = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const piece = event.results[i][0].transcript;
+      if (event.results[i].isFinal) state.finalTranscript += " " + piece;
+      else interim += piece;
+    }
+    state.interimTranscript = interim;
+    updateTranscriptView(false);
+  };
+
+  rec.onerror = (event) => {
+    if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+      showWarn("Trình duyệt chưa được cấp quyền Micro. Hãy bấm biểu tượng ổ khóa trên thanh địa chỉ → Cho phép Micro, hoặc dùng nút 'Nhập text kiểm tra'.");
+      stopSpeaking(false);
+    } else if (event.error !== "no-speech" && event.error !== "aborted") {
+      showWarn(`Lỗi nhận diện giọng nói (${event.error}). Hãy kiểm tra mạng và thử lại.`);
+    }
+  };
+
+  rec.onend = () => {
+    if (state.isRecording && state.secondsLeft > 0) {
+      try { rec.start(); } catch (e) {}
+    }
+  };
+
+  try {
+    rec.start();
+  } catch (e) {
+    showWarn("Không thể khởi động Micro. Hãy thử tải lại trang hoặc dùng chế độ Demo / Nhập text.");
+  }
+}
+
+function stopSpeaking(saveRecord = true) {
+  const wasRec = state.isRecording;
+  state.isRecording = false;
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
+  if (state.recognition) {
+    try { state.recognition.stop(); } catch (e) {}
+  }
+  if (wasRec) SFX.stop();
+
+  dom.timerDisplay.classList.remove("text-rose-600", "rec-pulse");
+  dom.btnStartRec.disabled = false;
+  dom.btnStopRec.disabled = true;
+
+  state.finalTranscript = (state.finalTranscript + " " + state.interimTranscript).trim();
+  state.interimTranscript = "";
+
+  const elapsed = state.startTimeMs ? Math.min(state.roundDuration, (Date.now() - state.startTimeMs) / 1000) : state.roundDuration;
+  const words = countWords(state.finalTranscript);
+  const wpm = computeWPM(words, elapsed);
+
+  updateTranscriptView(true);
+  dom.wpmDisplay.textContent = wpm;
+
+  if (saveRecord && words > 0) {
+    const unit = UNITS[state.unitIdx];
+    const missList = unit.keywords.filter(k => !state.matchedKw.has(k.toLowerCase()));
+    const rub = calculateRubricEstimate(words, wpm, state.matchedKw.size, unit.keywords.length);
+
+    document.getElementById("rubPron").textContent = rub.pron.toFixed(2);
+    document.getElementById("rubLex").textContent = rub.lex.toFixed(2);
+    document.getElementById("rubFlu").textContent = rub.flu.toFixed(2);
+    document.getElementById("rubTask").textContent = rub.task.toFixed(2);
+    document.getElementById("rubTotal").textContent = rub.total.toFixed(2);
+    dom.rubricEstimateBox.classList.remove("hidden");
+
+    const rBtn = document.getElementById(`roundBtn${state.round}`);
+    rBtn.classList.add("ring-2", "ring-emerald-500");
+
+    let advice = `🎉 <strong>Hoàn thành Lượt ${state.round} (${state.roundDuration}s · Mức ${state.level})!</strong> Nói được <strong>${words} từ</strong> · Tốc độ: <strong>${wpm} WPM</strong> · Từ khóa rõ: <strong>${state.matchedKw.size}/${unit.keywords.length}</strong> · Ước lượng Rubric: <strong>${rub.total}/10</strong>.`;
+    if (missList.length > 0) {
+      advice += `<br/>👉 <em>Gợi ý sửa lỗi:</em> Bấm vào các từ tô đỏ (<strong>${missList.join(", ")}</strong>) để nghe lại cách đọc bản xứ, sau đó chuyển sang lượt kế tiếp!`;
+    } else {
+      advice += `<br/>🌟 Tuyệt vời! Em đã phát âm rõ tất cả từ khóa mục tiêu. Hãy thử rút ngắn thời gian ở lượt sau để tăng phản xạ!`;
+    }
+    dom.feedbackBanner.innerHTML = advice;
+    dom.feedbackBanner.classList.remove("hidden");
+    SFX.hit();
+
+    saveHistoryEntry({
+      time: new Date().toLocaleString("vi-VN"),
+      code: (dom.studentCode.value || "HS_9").trim(),
+      unit: `U${unit.id}`,
+      roleLevel: `${ROLES[state.roleIdx].id} (${state.level})`,
+      round: `L${state.round} (${state.roundDuration}s)`,
+      words,
+      wpm,
+      kw: `${state.matchedKw.size}/${unit.keywords.length}`,
+      rubric: `${rub.total}/10`
+    });
+  } else if (saveRecord && words === 0) {
+    showWarn("Chưa thu được giọng nói tiếng Anh. Hãy nói to, rõ hơn hoặc kiểm tra Micro.");
+  }
+}
+
+// ============================================================================
+// 7. HỘP KIỂM TRA PHÁT ÂM CỤ THỂ (TỪ VỰNG / Q&A / HỘI THOẠI / MẪU CÂU)
+// ============================================================================
+const qcModal = document.getElementById("quickCheckModal");
+
+function openQuickCheck(title, targetText, keywords = [], hint = "", onPassCallback = null) {
+  AudioEngine.stop();
+  if (state.isRecording) stopSpeaking(false);
+  qcState = { target: targetText, keywords, hint, isListening: false, rec: null, onPassCallback };
+
+  document.getElementById("qcTitle").textContent = `🎙 ${title}`;
+  document.getElementById("qcTargetText").textContent = targetText;
+  document.getElementById("qcTargetHint").textContent = hint;
+  document.getElementById("qcStatus").textContent = 'Nhấn "Bấm nói ngay" và đọc to, rõ bằng tiếng Anh.';
+  document.getElementById("qcResultBox").classList.add("hidden");
+  document.getElementById("qcManualInput").value = "";
+  qcModal.classList.remove("hidden");
+}
+
+function closeQuickCheck() {
+  if (qcState.rec) { try { qcState.rec.stop(); } catch (e) {} }
+  qcState.isListening = false;
+  qcModal.classList.add("hidden");
+}
+
+function renderQcEvaluation(spokenText) {
+  const res = evaluateSpeechSimilarity(spokenText, qcState.target, qcState.keywords);
+  const box = document.getElementById("qcResultBox");
+  let color = "bg-rose-50 border-rose-300 text-rose-900";
+  let verdict = "❌ Cần luyện thêm — Hãy nghe mẫu chậm và đọc lại rõ âm cuối nhé!";
+  if (res.score >= 75) {
+    color = "bg-emerald-50 border-emerald-300 text-emerald-900";
+    verdict = "✅ Phát âm rất rõ và chính xác!";
+    SFX.hit();
+  } else if (res.score >= 45) {
+    color = "bg-amber-50 border-amber-300 text-amber-900";
+    verdict = "🟡 Khá tốt! Cần đọc rõ thêm vài từ khóa nữa.";
+    SFX.hit();
+  } else {
+    SFX.miss();
+  }
+
+  box.className = `p-3.5 rounded-xl border text-xs sm:text-sm space-y-1 ${color}`;
+  box.innerHTML = `
+    <div class="font-extrabold">${verdict} (${res.score}%)</div>
+    <div><strong>Máy nghe được:</strong> “${escapeHtml(spokenText)}”</div>
+    <div class="text-xs opacity-90">Khớp từ khóa: <strong>${res.hitCount}/${res.totalKey}</strong> ${res.hits.length ? `(${res.hits.join(", ")})` : ""}</div>
+  `;
+  box.classList.remove("hidden");
+
+  if (res.score >= 50 && typeof qcState.onPassCallback === "function") {
+    const cb = qcState.onPassCallback;
+    qcState.onPassCallback = null;
+    setTimeout(cb, 900);
+  }
+}
+
+document.getElementById("btnQcMic").addEventListener("click", () => {
+  AudioEngine.stop();
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    document.getElementById("qcStatus").textContent = "⚠️ Trình duyệt không hỗ trợ Micro SpeechRecognition. Em hãy dùng ô gõ bên dưới hoặc nút Test mẫu!";
+    return;
+  }
+  if (qcState.isListening && qcState.rec) {
+    qcState.rec.stop();
+    return;
+  }
+  const rec = new SpeechRec();
+  rec.lang = document.getElementById("accentSelect").value || "en-US";
+  rec.continuous = false;
+  rec.interimResults = false;
+  qcState.rec = rec;
+
+  const micBtn = document.getElementById("btnQcMic");
+  rec.onstart = () => {
+    SFX.start();
+    qcState.isListening = true;
+    micBtn.textContent = "🔴 Đang nghe...";
+    micBtn.classList.add("rec-pulse", "bg-rose-600");
+    document.getElementById("qcStatus").textContent = "🎙 Đang thu âm... Hãy nói ngay bây giờ!";
+  };
+  rec.onresult = (e) => {
+    const heard = e.results[0][0].transcript;
+    document.getElementById("qcStatus").textContent = "Đã hoàn tất nhận diện giọng nói.";
+    renderQcEvaluation(heard);
+  };
+  rec.onerror = (e) => {
+    document.getElementById("qcStatus").textContent = `⚠️ Không nhận được giọng nói (${e.error}). Hãy kiểm tra Micro hoặc bấm Test mẫu.`;
+  };
+  rec.onend = () => {
+    qcState.isListening = false;
+    micBtn.textContent = "🎙 Bấm nói ngay";
+    micBtn.classList.remove("rec-pulse", "bg-rose-600");
+  };
+  try { rec.start(); } catch (e) {}
+});
+
+document.getElementById("btnQcListen").addEventListener("click", () => {
+  if (/^[a-zA-Z-]+$/.test(qcState.target.trim())) AudioEngine.speakWord(qcState.target, 1.0);
+  else AudioEngine.speak(qcState.target, 0.95);
+});
+document.getElementById("btnQcListenSlow").addEventListener("click", () => AudioEngine.speak(qcState.target, 0.72));
+document.getElementById("btnQcSim").addEventListener("click", () => renderQcEvaluation(qcState.target));
+document.getElementById("btnQcManualEval").addEventListener("click", () => {
+  const val = document.getElementById("qcManualInput").value.trim();
+  if (!val) { showToast("Hãy nhập câu tiếng Anh để kiểm tra!", "warn"); return; }
+  renderQcEvaluation(val);
+});
+document.getElementById("btnCloseQc").addEventListener("click", closeQuickCheck);
+
+// ============================================================================
+// 8. HỘI THOẠI NHẬP VAI TƯƠNG TÁC (MÁY ĐỌC A -> EM NÓI B)
+// ============================================================================
+function startInteractiveRoleplay() {
+  const unit = UNITS[state.unitIdx];
+  const lines = unit.dialogue.lines;
+  const banner = document.getElementById("roleplayBanner");
+  banner.classList.remove("hidden");
+
+  let pairIdx = 0;
+  const runTurn = () => {
+    if (pairIdx * 2 >= lines.length) {
+      banner.innerHTML = "🎉 Tuyệt vời! Em đã hoàn thành toàn bộ hội thoại nhập vai của Unit này!";
+      SFX.hit();
+      return;
+    }
+    const lineA = lines[pairIdx * 2];
+    const lineB = lines[pairIdx * 2 + 1];
+
+    document.querySelectorAll("[id^='dlg-line-']").forEach(el => el.classList.remove("ring-2", "ring-amber-500"));
+    const elA = document.getElementById(`dlg-line-${pairIdx * 2}`);
+    if (elA) elA.classList.add("ring-2", "ring-amber-500");
+
+    banner.innerHTML = `🎭 Lượt ${pairIdx + 1}/${Math.floor(lines.length / 2)}: Máy đang nói Vai A... Hãy lắng nghe và chuẩn bị đáp Vai B!`;
+    AudioEngine.speak(lineA.text, 0.95, () => {
+      const elB = document.getElementById(`dlg-line-${pairIdx * 2 + 1}`);
+      if (elB) elB.classList.add("ring-2", "ring-emerald-500");
+      openQuickCheck(
+        `Nhập vai B — Lượt ${pairIdx + 1}`,
+        lineB.text,
+        [],
+        `Vai A vừa nói: "${lineA.text}" → Nghĩa câu em đáp: ${lineB.vi}`,
+        () => {
+          closeQuickCheck();
+          pairIdx++;
+          setTimeout(runTurn, 400);
+        }
+      );
+    }, 1.05);
+  };
+  runTurn();
+}
+
+// ============================================================================
+// 9. LỊCH SỬ LOCALSTORAGE, XUẤT CSV & HỒ SƠ KHKT (QR + FLCAS)
+// ============================================================================
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+  catch (e) { return []; }
+}
+
+function saveHistoryEntry(entry) {
+  const list = loadHistory();
+  list.unshift(entry);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 100))); } catch (e) {}
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = loadHistory();
+  if (!list.length) {
+    dom.historyBody.innerHTML = `<tr><td colspan="9" class="text-center text-slate-400 italic py-6">Chưa có lượt luyện nói nào được lưu. Hãy hoàn thành 1 lượt nói để ghi nhận tiến bộ!</td></tr>`;
+    return;
+  }
+  dom.historyBody.innerHTML = list.map(item => `
+    <tr class="hover:bg-slate-50">
+      <td class="p-2.5 text-slate-600">${escapeHtml(item.time)}</td>
+      <td class="p-2.5 font-bold text-slate-900">${escapeHtml(item.code)}</td>
+      <td class="p-2.5 font-semibold text-sky-700">${escapeHtml(item.unit)}</td>
+      <td class="p-2.5">${escapeHtml(item.roleLevel)}</td>
+      <td class="p-2.5">${escapeHtml(item.round)}</td>
+      <td class="p-2.5">${item.words}</td>
+      <td class="p-2.5 font-extrabold text-emerald-700">${item.wpm}</td>
+      <td class="p-2.5">${escapeHtml(item.kw)}</td>
+      <td class="p-2.5 font-bold text-indigo-700">${escapeHtml(item.rubric || "-")}</td>
+    </tr>
+  `).join("");
+}
+
+function copyTextFallback(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand("copy");
+    showToast("Đã sao chép đường dẫn QR!", "ok");
+  } catch (e) {
+    showToast("Không thể tự sao chép. Hãy bôi đen đường dẫn để chép.", "warn");
+  }
+  ta.remove();
+}
+
+function renderQrLinks() {
+  let base = (document.getElementById("baseUrlInput").value || "").trim();
+  if (!base) base = "https://tongtaitld11-max.github.io/SPEAK-WHEEL-9/";
+  base = base.split("?")[0];
+  const grid = document.getElementById("qrLinksGrid");
+  grid.innerHTML = UNITS.map(u => {
+    const link = `${base}?unit=${u.id}`;
+    return `
+      <div class="p-2.5 rounded-lg bg-white border border-slate-200 flex items-center justify-between gap-2">
+        <div class="truncate">
+          <div class="font-bold text-slate-800">U${u.id}: ${escapeHtml(u.title.replace(/^Unit \d+:\s*/, ""))}</div>
+          <div class="text-[11px] text-sky-700 truncate">${escapeHtml(link)}</div>
+        </div>
+        <button type="button" class="btn-copy-qr px-2 py-1 rounded bg-slate-100 hover:bg-sky-100 text-slate-700 font-bold shrink-0" data-link="${escapeHtml(link)}">📋 Chép</button>
+      </div>
+    `;
+  }).join("");
+
+  grid.querySelectorAll(".btn-copy-qr").forEach(b => {
+    b.addEventListener("click", () => copyTextFallback(b.dataset.link));
+  });
+}
+
+function renderFlcasForm() {
+  const wrap = document.getElementById("flcasContainer");
+  wrap.innerHTML = FLCAS_ITEMS.map(item => `
+    <div class="p-2.5 rounded-lg bg-white border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+      <div class="font-medium text-slate-800"><strong>Câu ${item.id}${item.rev ? "*" : ""}:</strong> ${escapeHtml(item.text)}</div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        ${[1, 2, 3, 4, 5].map(val => `
+          <label class="cursor-pointer inline-flex items-center gap-0.5 px-2 py-1 rounded border border-slate-200 hover:bg-amber-50">
+            <input type="radio" name="flcas_${item.id}" value="${val}" ${val === 3 ? "checked" : ""} />
+            <span>${val}</span>
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+// ============================================================================
+// 10. GẮN TOÀN BỘ SỰ KIỆN CHO TẤT CẢ CÁC NÚT ỨNG DỤNG
+// ============================================================================
+function bindEvents() {
+  // Chuyển Tab
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      AudioEngine.stop();
+      const target = btn.dataset.tab;
+      state.activeTab = target;
+      document.querySelectorAll(".tab-btn").forEach(b => {
+        b.classList.remove("bg-[#14365D]", "text-white", "shadow");
+        b.classList.add("text-slate-600", "hover:bg-slate-100");
+      });
+      btn.classList.remove("text-slate-600", "hover:bg-slate-100");
+      btn.classList.add("bg-[#14365D]", "text-white", "shadow");
+
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+      document.getElementById(`panel-${target}`).classList.remove("hidden");
+    });
+  });
+
+  // Thay đổi 4 bộ chọn SPIN
+  dom.unitSelect.addEventListener("change", () => { state.unitIdx = Number(dom.unitSelect.value); renderAllViews(); });
+  dom.roleSelect.addEventListener("change", () => { state.roleIdx = Number(dom.roleSelect.value); renderAllViews(); });
+  dom.contextSelect.addEventListener("change", () => { state.contextIdx = Number(dom.contextSelect.value); renderAllViews(); });
+  dom.levelSelect.addEventListener("change", () => { state.level = dom.levelSelect.value; renderAllViews(); });
+
+  // Nút Xoay ngẫu nhiên SPIN
+  document.getElementById("btnRandomSpin").addEventListener("click", () => {
+    SFX.spin();
+    state.unitIdx = Math.floor(Math.random() * UNITS.length);
+    state.roleIdx = Math.floor(Math.random() * ROLES.length);
+    state.contextIdx = Math.floor(Math.random() * CONTEXTS.length);
+    const lvls = ["A1", "A2", "B1", "B2"];
+    state.level = lvls[Math.floor(Math.random() * lvls.length)];
+
+    dom.unitSelect.value = state.unitIdx;
+    dom.roleSelect.value = state.roleIdx;
+    dom.contextSelect.value = state.contextIdx;
+    dom.levelSelect.value = state.level;
+
+    dom.comboBanner.classList.remove("spin-pop");
+    void dom.comboBanner.offsetWidth;
+    dom.comboBanner.classList.add("spin-pop");
+
+    document.querySelectorAll(".round-btn").forEach(b => b.classList.remove("ring-2", "ring-emerald-500"));
+    renderAllViews();
+    showToast(`🎲 Đã xoay ra: ${UNITS[state.unitIdx].title} · ${ROLES[state.roleIdx].id} · ${state.level}`, "ok");
+  });
+
+  // Kiểm tra âm thanh & Dừng tiếng toàn cục
+  document.getElementById("btnTestAudioTop").addEventListener("click", () => {
+    SFX.hit();
+    AudioEngine.speak("Hello! Welcome to Speak Check Nine. Your web audio is working clearly!", 0.95);
+    showToast("Đang phát câu kiểm tra âm thanh tiếng Anh...", "info");
+  });
+  document.getElementById("btnGlobalStopAudio").addEventListener("click", () => {
+    AudioEngine.stop();
+    showToast("Đã dừng âm thanh.", "info");
+  });
+
+  // Shadowing buttons
+  document.getElementById("btnSpeakSlow").addEventListener("click", () => {
+    const txt = UNITS[state.unitIdx].samples[state.level];
+    AudioEngine.speak(txt, 0.8);
+  });
+  document.getElementById("btnSpeakNormal").addEventListener("click", () => {
+    const txt = UNITS[state.unitIdx].samples[state.level];
+    AudioEngine.speak(txt, 1.0);
+  });
+  document.getElementById("btnStopSpeak").addEventListener("click", () => AudioEngine.stop());
+
+  // 3 Nút lượt 60s - 45s - 30s
+  document.querySelectorAll(".round-btn").forEach(btn => {
+    btn.addEventListener("click", () => selectRound(Number(btn.dataset.round), Number(btn.dataset.sec)));
+  });
+
+  // Micro & Demo & Manual Check
+  dom.btnStartRec.addEventListener("click", startSpeaking);
+  dom.btnStopRec.addEventListener("click", () => stopSpeaking(true));
+  document.getElementById("btnResetSession").addEventListener("click", () => resetSpeakSession(true));
+
+  document.getElementById("btnDemoTest").addEventListener("click", () => {
+    if (state.isRecording) stopSpeaking(false);
+    hideWarn();
+    const unit = UNITS[state.unitIdx];
+    const sample = unit.samples[state.level] || unit.samples.A2;
+    const sentences = sample.split(". ");
+    const simulated = sentences.length > 2 ? sentences.slice(0, sentences.length - 1).join(". ") + "." : sample;
+    state.finalTranscript = simulated;
+    state.interimTranscript = "";
+    state.startTimeMs = Date.now() - 26000;
+    state.secondsLeft = Math.max(0, state.roundDuration - 26);
+    dom.timerDisplay.textContent = `${state.secondsLeft}s`;
+    stopSpeaking(true);
+    showToast("⚡ Đã chạy mô phỏng Demo chấm điểm thành công!", "ok");
+  });
+
+  document.getElementById("btnToggleManual").addEventListener("click", () => {
+    document.getElementById("manualInputBox").classList.toggle("hidden");
+  });
+  document.getElementById("btnFillSampleManual").addEventListener("click", () => {
+    document.getElementById("manualTextarea").value = UNITS[state.unitIdx].samples[state.level];
+  });
+  document.getElementById("btnEvalManual").addEventListener("click", () => {
+    const txt = document.getElementById("manualTextarea").value.trim();
+    if (!txt) { showToast("Hãy nhập văn bản tiếng Anh trước khi chấm!", "warn"); return; }
+    state.finalTranscript = txt;
+    state.interimTranscript = "";
+    state.startTimeMs = Date.now() - 30000;
+    stopSpeaking(true);
+  });
+
+  // Vocab filter & Play All buttons
+  document.getElementById("vocabLevelFilter").addEventListener("change", renderVocabTab);
+  document.getElementById("btnPlayAllVocab").addEventListener("click", () => {
+    const unit = UNITS[state.unitIdx];
+    const filter = document.getElementById("vocabLevelFilter").value;
+    const list = filter === "ALL" ? unit.vocab : unit.vocab.filter(v => v.lvl === filter);
+    AudioEngine.speakSequence(list.map(v => ({ text: v.w, rate: 0.9 })), null, () => showToast("Đã đọc xong bộ từ vựng!", "ok"));
+  });
+  document.getElementById("btnPlayAllQA").addEventListener("click", () => {
+    const unit = UNITS[state.unitIdx];
+    const seq = [];
+    unit.qa.forEach(item => { seq.push({ text: item.q, pitch: 1.05 }); seq.push({ text: item.a, pitch: 0.95 }); });
+    AudioEngine.speakSequence(seq, null, () => showToast("Đã đọc xong bộ Câu hỏi ngắn!", "ok"));
+  });
+  document.getElementById("btnPlayDialogue").addEventListener("click", () => {
+    const unit = UNITS[state.unitIdx];
+    const seq = unit.dialogue.lines.map(ln => ({ text: ln.text, pitch: ln.sp === "A" ? 1.08 : 0.9 }));
+    AudioEngine.speakSequence(seq, (idx) => {
+      document.querySelectorAll("[id^='dlg-line-']").forEach(el => el.classList.remove("ring-2", "ring-sky-500"));
+      const cur = document.getElementById(`dlg-line-${idx}`);
+      if (cur) cur.classList.add("ring-2", "ring-sky-500");
+    }, () => {
+      document.querySelectorAll("[id^='dlg-line-']").forEach(el => el.classList.remove("ring-2", "ring-sky-500"));
+      showToast("Đã phát xong toàn bộ hội thoại!", "ok");
+    });
+  });
+  document.getElementById("btnStartRoleplay").addEventListener("click", startInteractiveRoleplay);
+  document.getElementById("btnPlayAllPatterns").addEventListener("click", () => {
+    const unit = UNITS[state.unitIdx];
+    AudioEngine.speakSequence(unit.patterns.map(p => ({ text: p.ex, rate: 0.92 })), null, () => showToast("Đã đọc xong bộ mẫu câu!", "ok"));
+  });
+
+  // Xuất CSV & Xóa lịch sử (KHÔNG dùng alert/confirm)
+  document.getElementById("btnExportCsv").addEventListener("click", () => {
+    const list = loadHistory();
+    if (!list.length) { showToast("Chưa có dữ liệu lịch sử để xuất CSV.", "warn"); return; }
+    const header = ["Thoi_gian", "Ma_HS", "Unit", "Vai_tro_Cap_do", "Luot", "So_tu", "WPM", "Tu_khoa_ro", "Rubric_uoc_luong"];
+    const rows = list.map(i => [i.time, i.code, i.unit, i.roleLevel, i.round, i.words, i.wpm, i.kw, i.rubric || "-"]
+      .map(v => `"${String(v).replace(/"/g, '""')}"`).join(","));
+    const csv = "\uFEFF" + header.join(",") + "\n" + rows.join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "SoTay_PhanXa_WPM_SpeakCheck9.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("📥 Đã xuất tệp Excel CSV thành công!", "ok");
+  });
+
+  document.getElementById("btnAskClearHistory").addEventListener("click", () => {
+    document.getElementById("clearConfirmBar").classList.remove("hidden");
+  });
+  document.getElementById("btnConfirmClearNo").addEventListener("click", () => {
+    document.getElementById("clearConfirmBar").classList.add("hidden");
+  });
+  document.getElementById("btnConfirmClearYes").addEventListener("click", () => {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    document.getElementById("clearConfirmBar").classList.add("hidden");
+    renderHistory();
+    showToast("Đã xóa toàn bộ lịch sử WPM trên máy.", "info");
+  });
+
+  // Hồ sơ KHKT: Cập nhật 12 link QR & Tính điểm FLCAS
+  document.getElementById("btnUpdateQrLinks").addEventListener("click", () => {
+    renderQrLinks();
+    showToast("Đã cập nhật 12 đường dẫn QR (?unit=1..12)!", "ok");
+  });
+
+  document.getElementById("btnCalcFlcas").addEventListener("click", () => {
+    let total = 0;
+    FLCAS_ITEMS.forEach(item => {
+      const checked = document.querySelector(`input[name="flcas_${item.id}"]:checked`);
+      const raw = checked ? Number(checked.value) : 3;
+      const converted = item.rev ? (6 - raw) : raw;
+      total += converted;
+    });
+    let levelDesc = "Lo âu rất thấp / Tự tin (12–23đ)";
+    if (total >= 48) levelDesc = "Lo âu rất cao (48–60đ) — Cần luyện SPEAK-WHEEL 9 mức A1/A2 trước";
+    else if (total >= 36) levelDesc = "Lo âu cao (36–47đ) — Nên bắt đầu với Shadowing 0.8x và giàn giáo A2";
+    else if (total >= 24) levelDesc = "Lo âu trung bình (24–35đ) — Phù hợp luyện mức A2/B1 chu kỳ 60–45–30s";
+
+    const resEl = document.getElementById("flcasResult");
+    resEl.innerHTML = `📊 Tổng điểm FLCAS (đã đảo chiều câu 3*, 7*, 11*): <span class="text-amber-700 text-base">${total} / 60 điểm</span> — <span>${levelDesc}</span>`;
+    resEl.classList.remove("hidden");
+    SFX.hit();
+  });
+}
+
+// ============================================================================
+// 11. KHỞI CHẠY ỨNG DỤNG
+// ============================================================================
+window.addEventListener("DOMContentLoaded", () => {
+  AudioEngine.init();
+  initSelectors();
+  bindEvents();
+  renderAllViews();
+  renderHistory();
+  renderQrLinks();
+  renderFlcasForm();
+});
+</script>
+</body>
+</html>
